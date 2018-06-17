@@ -20,11 +20,15 @@ public class GameStateManager
         currentState = LEVEL1STATE;
         gameStates.add(new MenuState(this));
         gameStates.add(new Level1State(this));
+
+        for(GameState state: gameStates){
+            state.init();
+	}
     }
 
     public void setState(int state){
         currentState = state;
-        getCurrentState().init();
+        //getCurrentState().init();
 	System.out.println(currentState);
     }
 

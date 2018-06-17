@@ -87,16 +87,17 @@ public class TileMap
 
 		switch (Integer.parseInt(map[y][x])) {
 		    case 00:
-			tileMap[y][x] = new EmptyTile(this);
+			tileMap[y][x] = new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,this);
+
 			break;
 		    case 01:
 			tileMap[y][x] =
-				new NormalTile(new Sprite("resources/Sprites/Tiles/normaltile.png"), x * tileSize, y * tileSize,
+				new NormalTile(new Sprite("resources/Sprites/Tiles/normalTile2.png"), x * tileSize, y * tileSize,
 					       this);
 			break;
 
 		    default:
-			tileMap[y][x] = new EmptyTile(this);
+			tileMap[y][x] = new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,this);
 			System.out.println("Bad tile type! Creating empty tile!");
 
 		}

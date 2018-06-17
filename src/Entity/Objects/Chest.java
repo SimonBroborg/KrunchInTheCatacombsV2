@@ -14,7 +14,7 @@ public class Chest extends GameObject
 
     public Chest(final TileMap tm) {
 	super(tm);
-	sprite = new Sprite("resources/Sprites/Objects/chest.png");
+	sprite = new Sprite("resources/Sprites/Objects/Chest/AChest1.png");
 	fallSpeed = 0.5;
 	maxFallSpeed = 10;
 	content = null;
@@ -30,7 +30,7 @@ public class Chest extends GameObject
 
         // The chest will open if it was closed
 	if (!opened) {
-	    sprite = new Sprite("resources/Sprites/Objects/openedChest.png");
+	    sprite = new Sprite("resources/Sprites/Objects/Chest/AChest1_opened.png");
 	    height = 68;
 	    dy = bounceSpeed;  // prevents the chest from getting stuck in the ground
 	    cheight = 58;

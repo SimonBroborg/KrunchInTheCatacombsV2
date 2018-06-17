@@ -2,14 +2,16 @@ package Entity;
 
 import Entity.Objects.Chest;
 import Entity.Objects.GameObject;
+import Entity.Objects.Pickups.Pickup;
 import TileMap.TileMap;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
+/**
+ *
+ */
 @SuppressWarnings("AssignmentToSuperclassField")
 public class Player extends Entity
 {
@@ -39,7 +41,7 @@ public class Player extends Entity
 
     public void checkAct(List<GameObject> objects) {
 	boolean canUse = false;
-	ArrayList<GameObject> newObjects = new ArrayList<>();
+	List<GameObject> newObjects = new ArrayList<>();
 	for (GameObject o : objects) {
 
 	    if (o.isUsable()) {
@@ -63,7 +65,6 @@ public class Player extends Entity
 		} else {
 		    o.setCanUse(canUse);
 		}
-
 	    }
 	}
 	objects.addAll(newObjects);

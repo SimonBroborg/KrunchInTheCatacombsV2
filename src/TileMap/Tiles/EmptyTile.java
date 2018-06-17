@@ -1,12 +1,16 @@
 package TileMap.Tiles;
 
-import TileMap.*;
+import Entity.Sprite;
+import TileMap.Tile;
+import TileMap.TileMap;
 
 public class EmptyTile extends Tile
 {
-    public EmptyTile(TileMap tm) {
-	super("", 0, 0, tm);
-	transparent = true;
+    public EmptyTile(Sprite sprite, int x, int y, TileMap tm) {
+	super("Empty", x, y, tm);
+	transparent = false;
 	solid = false;
+
+	this.sprite = sprite;
     }
 }

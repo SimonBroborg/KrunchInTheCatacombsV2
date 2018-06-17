@@ -14,16 +14,16 @@ public class Pickup extends GameObject
 
     public Pickup(final TileMap tm) {
 	super(tm);
-	sprite = new Sprite("resources/Sprites/Objects/Pickups/test.png");
+	sprite = new Sprite("resources/Sprites/Objects/Pickups/pickaxe.png");
 	fallSpeed = 0.5;
 	maxFallSpeed = 10;
-	height = 20;
-	width = 20;
-	cheight = 10;
-	cwidth = 10;
+	height = sprite.getImage().getHeight();
+	width = sprite.getImage().getWidth();
+	cheight = height - 10;
+	cwidth = width - 10;
 	bouncedOnce = false;
 	bounceSpeed = -10;
-	usable = true;
+	usable = false;
     }
 
     public void bounce() {
@@ -33,9 +33,12 @@ public class Pickup extends GameObject
     }
 
     @Override public void update() {
+        // Makes sure the pickup stops moving
 	if (isOnGround()) {
 	    setVector(0, 0);
+	    usable = true;
 	}
+
 	super.update();
     }
 
