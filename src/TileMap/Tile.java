@@ -18,11 +18,14 @@ public class Tile
     protected boolean solid;
     protected boolean transparent;
 
-    public Tile(String type, double x, double y, int tileSize) {
+    protected TileMap tm;
+
+    public Tile(String type, double x, double y, TileMap tm) {
 	this.type = type;
 	this.x = x;
 	this.y = y;
-	this.tileSize = tileSize;
+	this.tileSize = tm.getTileSize();
+	this.tm = tm;
     }
 
     public boolean isSolid() {
@@ -50,6 +53,6 @@ public class Tile
     }
 
     public void draw(Graphics2D g2d) {
-	g2d.drawImage(sprite.getImage(), (int) x, (int) y, tileSize, tileSize,null);
+	g2d.drawImage(sprite.getImage(), (int)( x + tm.getX()), (int) (y + tm.getY()), tileSize, tileSize,null);
     }
 }

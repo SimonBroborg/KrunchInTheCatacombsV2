@@ -32,6 +32,9 @@ public abstract class Entity
     protected boolean bottomLeft;
     protected boolean bottomRight;
 
+    // for bouncing
+    protected int bounceSpeed;
+
     // movement
     protected boolean left;
     protected boolean right;
@@ -51,6 +54,7 @@ public abstract class Entity
 
     // Sprite / Animation
     protected Sprite sprite;
+    protected boolean facingRight;
 
     // Tile stuff
     protected TileMap tm;
@@ -60,6 +64,9 @@ public abstract class Entity
     public Entity(TileMap tm) {
 	this.tm = tm;
 	tileSize = tm.getTileSize();
+	facingRight = true;
+
+	bounceSpeed = -5;
     }
 
     public boolean intersects(Entity e) {
@@ -129,6 +136,51 @@ public abstract class Entity
 
     }
 
+    public void getNextPosition() {
+	// movement
+	if (left) {
+	    dx -= moveSpeed;
+	    if (dx < -maxSpeed) {
+		dx = -maxSpeed;
+	    }
+	} else if (right) {
+	    dx += moveSpeed;
+	    if (dx > maxSpeed) {
+		dx = maxSpeed;
+	    }
+	} else {
+	    if (dx > 0) {
+		dx -= stopSpeed;
+		if (dx < 0) {
+		    dx = 0;
+		}
+	    } else if (dx < 0) {
+		dx += stopSpeed;
+		if (dx > 0) {
+		    dx = 0;
+		}
+	    }
+	}
+	// jumping
+	if (jumping && !falling) {
+	    dy = jumpStart;
+	    falling = true;
+	}
+	// falling
+	if (falling) {
+	    dy += fallSpeed;
+	    if (dy > 0) {
+		jumping = false;
+	    }
+	    if (dy < 0 && !jumping) {
+		dy += stopJumpSpeed;
+	    }
+	    if (dy > maxFallSpeed) {
+		dy = maxFallSpeed;
+	    }
+	}
+    }
+
     public void checkTileMapCollision() {
 	currCol = (int) x / tileSize;
 	currRow = (int) y / tileSize;
@@ -185,6 +237,13 @@ public abstract class Entity
 	}
     }
 
+    public void infBounce() {
+	if (dy == 0 && !jumping && !falling) {
+	    //bounceSpeed -= 1;
+	    dy += bounceSpeed;
+	}
+    }
+
     public void setLeft(boolean b) { left = b;}
 
     public void setRight(boolean b) { right = b;}
@@ -196,6 +255,12 @@ public abstract class Entity
     public void setJumping(boolean b) { jumping = b;}
 
     public void draw(Graphics2D g2d) {
-	g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
+	setMapPosition();
+	if (facingRight) {
+	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), null);
+	} else {
+	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2 + width), (int) (y + ymap - height / 2), -width,
+			  height, null);
+	}
     }
 }

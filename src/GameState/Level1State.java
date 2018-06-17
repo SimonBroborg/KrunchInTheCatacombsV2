@@ -1,5 +1,7 @@
 package GameState;
 
+import Entity.Objects.Chest;
+import Entity.Objects.GameObject;
 import Entity.Player;
 import Main.GameComponent;
 import TileMap.Background;
@@ -7,6 +9,7 @@ import TileMap.TileMap;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,6 +18,8 @@ public class Level1State extends GameState
 {
     private Player player;
     private TileMap tm;
+
+    private ArrayList<GameObject> objects;
 
     private Background bg;
 
@@ -28,21 +33,38 @@ public class Level1State extends GameState
 	player = new Player(tm);
 	player.setPosition(100, 100);
 
-	bg = new Background("resources/Backgrounds/space.png", 0.1);
+	bg = new Background("resources/Backgrounds/space.png", 0.0);
 
+	objects = new ArrayList<>();
+	Chest c = new Chest(tm);
+	c.setPosition(200, player.getY());
+	objects.add(c);
+
+
+	c = new Chest(tm);
+	c.setPosition(400, player.getY() - 200);
+	objects.add(c);
 	tm.loadMapFile("Resources/Maps/level1.txt");
 	tm.loadTileMap();
     }
 
     @Override public void update() {
 	player.update();
-	tm.setPosition(GameComponent.WIDTH / 2 - player.getX(), GameComponent.HEIGHT / 2 - player.getY());
+	for (GameObject o : objects) {
+	    o.update();
+	}
+	tm.setPosition(GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(), GameComponent.HEIGHT / 2);
 	bg.setPosition(tm.getX(), tm.getY());
+
+	player.checkAct(objects);
     }
 
     @Override public void draw(final Graphics2D g2d) {
-        bg.draw(g2d);
+	bg.draw(g2d);
 	tm.draw(g2d);
+	for (GameObject o : objects) {
+	    o.draw(g2d);
+	}
 	player.draw(g2d);
     }
 
@@ -52,6 +74,7 @@ public class Level1State extends GameState
 	if (k == KeyEvent.VK_W) player.setUp(true);
 	if (k == KeyEvent.VK_S) player.setDown(true);
 	if (k == KeyEvent.VK_SPACE) player.setJumping(true);
+	if (k == KeyEvent.VK_E) player.setActing(true);
     }
 
     @Override public void keyReleased(final int k) {
@@ -60,6 +83,6 @@ public class Level1State extends GameState
 	if (k == KeyEvent.VK_W) player.setUp(false);
 	if (k == KeyEvent.VK_S) player.setDown(false);
 	if (k == KeyEvent.VK_SPACE) player.setJumping(false);
-
+	if (k == KeyEvent.VK_E) player.setActing(false);
     }
 }

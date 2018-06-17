@@ -4,8 +4,8 @@ import TileMap.*;
 
 public class EmptyTile extends Tile
 {
-    public EmptyTile() {
-	super("", 0, 0, 0);
+    public EmptyTile(TileMap tm) {
+	super("", 0, 0, tm);
 	transparent = true;
 	solid = false;
     }

@@ -5,8 +5,8 @@ import TileMap.*;
 
 public class NormalTile extends Tile
 {
-    public NormalTile(Sprite sprite, int x, int y, int tileSize){
-        super("Normal", x, y, tileSize);
+    public NormalTile(Sprite sprite, int x, int y, TileMap tm){
+        super("Normal", x, y, tm);
         transparent = false;
         solid = true;
 

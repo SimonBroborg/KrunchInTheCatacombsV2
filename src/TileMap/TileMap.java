@@ -84,22 +84,25 @@ public class TileMap
 	// Loops through the text-map and adds a tile to the tile map for each non-empty tile.
 	for (int y = 0; y < map.length; y++) {
 	    for (int x = 0; x < map[y].length; x++) {
-		try {
-		    switch (Integer.parseInt(map[y][x])) {
-			case 00:
-			    tileMap[y][x] = new EmptyTile();
-			    break;
-			case 01:
-			    tileMap[y][x] = new NormalTile(new Sprite("resources/Sprites/Tiles/normaltile.png"), x * tileSize,
-							   y * tileSize, tileSize);
-			    break;
-		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    System.out.println("Bad tile type! Creating empty tile!");
+
+		switch (Integer.parseInt(map[y][x])) {
+		    case 00:
+			tileMap[y][x] = new EmptyTile(this);
+			break;
+		    case 01:
+			tileMap[y][x] =
+				new NormalTile(new Sprite("resources/Sprites/Tiles/normaltile.png"), x * tileSize, y * tileSize,
+					       this);
+			break;
+
+		    default:
+			tileMap[y][x] = new EmptyTile(this);
+			System.out.println("Bad tile type! Creating empty tile!");
+
 		}
 	    }
 	}
+
     }
 
     public void draw(Graphics2D g2d) {
@@ -116,7 +119,7 @@ public class TileMap
 	this.x = x;
 	this.y = y;
 
-	fixBounds();
+	//fixBounds();
 
 	colOffset = (int) -this.x / tileSize;
 	rowOffset = (int) -this.y / tileSize;

@@ -22,8 +22,8 @@ public class Background
     }
 
     public void setPosition(double x, double y){
-        this.x = (x + moveScale) % GameComponent.WIDTH;
-        this.y = (y + moveScale) % GameComponent.HEIGHT;
+        this.x = (x *  moveScale) % GameComponent.WIDTH;
+        this.y = (y * moveScale) % GameComponent.HEIGHT;
     }
 
     public void setVector(double dx, double dy){
