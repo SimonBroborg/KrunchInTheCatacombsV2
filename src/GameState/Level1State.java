@@ -33,7 +33,7 @@ public class Level1State extends GameState
 	player = new Player(tm);
 	player.setPosition(100, 100);
 
-	bg = new Background("resources/Backgrounds/space.png", 0.0);
+	bg = new Background("resources/Backgrounds/cave.jpg", 0.1);
 
 	objects = new ArrayList<>();
 	Chest c = new Chest(tm);

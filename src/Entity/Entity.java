@@ -35,6 +35,9 @@ public abstract class Entity
     // for bouncing
     protected int bounceSpeed;
 
+    protected boolean canUse;
+    protected boolean usable;
+
     // movement
     protected boolean left;
     protected boolean right;
@@ -54,6 +57,7 @@ public abstract class Entity
 
     // Sprite / Animation
     protected Sprite sprite;
+    private Sprite usableSprite;
     protected boolean facingRight;
 
     // Tile stuff
@@ -66,6 +70,7 @@ public abstract class Entity
 	tileSize = tm.getTileSize();
 	facingRight = true;
 
+	usableSprite = new Sprite("resources/Sprites/Misc/usableSprite.png");
 	bounceSpeed = -5;
     }
 
@@ -134,6 +139,14 @@ public abstract class Entity
 	bottomLeft = bl.isSolid();
 	bottomRight = br.isSolid();
 
+    }
+
+    public void setCanUse(boolean canUse) {
+	this.canUse = canUse;
+    }
+
+    public boolean isUsable() {
+	return usable;
     }
 
     public void getNextPosition() {
@@ -238,10 +251,14 @@ public abstract class Entity
     }
 
     public void infBounce() {
-	if (dy == 0 && !jumping && !falling) {
+	if (isOnGround()) {
 	    //bounceSpeed -= 1;
 	    dy += bounceSpeed;
 	}
+    }
+
+    public boolean isOnGround() {
+	return (!falling && !jumping && dy == 0);
     }
 
     public void setLeft(boolean b) { left = b;}
@@ -256,6 +273,10 @@ public abstract class Entity
 
     public void draw(Graphics2D g2d) {
 	setMapPosition();
+	if (canUse) {
+	    g2d.drawImage(usableSprite.getImage(), (int) (x + xmap - width / 2) - 20, (int) (y + ymap - height / 2) - 20, null);
+	}
+
 	if (facingRight) {
 	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), null);
 	} else {

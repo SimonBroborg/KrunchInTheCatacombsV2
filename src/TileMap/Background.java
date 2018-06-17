@@ -37,9 +37,9 @@ public class Background
     }
 
     public void draw(Graphics2D g2d) {
-    	g2d.drawImage(sprite.getImage(), (int) x, (int) y, null);
+    	g2d.drawImage(sprite.getImage(), (int) x, (int) y, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT* GameComponent.SCALE, null);
     	if (x < 0) {
-    	    g2d.drawImage(sprite.getImage(), (int) x + GameComponent.WIDTH, (int) y, null);
+    	    g2d.drawImage(sprite.getImage(), (int) x + GameComponent.WIDTH, (int) y,  null);
     	}
     	if (x > 0) {
     	    g2d.drawImage(sprite.getImage(), (int) x - GameComponent.WIDTH, (int) y, null);
