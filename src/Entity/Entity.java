@@ -37,6 +37,7 @@ public abstract class Entity
 
     protected boolean canUse;
     protected boolean usable;
+    protected boolean solid;
 
     // movement
     protected boolean left;
@@ -72,6 +73,7 @@ public abstract class Entity
 
 	usableSprite = new Sprite("resources/Sprites/Misc/usableSprite.png");
 	bounceSpeed = -5;
+	solid = true;
     }
 
     public boolean intersects(Entity e) {
@@ -206,7 +208,7 @@ public abstract class Entity
 
 	calculateCorners(x, ydest);
 	if (dy < 0) {
-	    if (topLeft || topRight) {
+	    if ((topLeft || topRight) && solid) {
 		dy = 0;
 		ytemp = currRow * tileSize + cheight / 2;
 
@@ -215,7 +217,7 @@ public abstract class Entity
 	    }
 	}
 	if (dy > 0) {
-	    if (bottomLeft || bottomRight) {
+	    if ((bottomLeft || bottomRight) && solid) {
 		dy = 0;
 		falling = false;
 		ytemp = (currRow + 1) * tileSize - cheight / 2;
@@ -226,7 +228,7 @@ public abstract class Entity
 
 	calculateCorners(xdest, y);
 	if (dx < 0) {
-	    if (topLeft || bottomLeft) {
+	    if ((topLeft || bottomLeft) && solid) {
 		dx = 0;
 		xtemp = currCol * tileSize + cwidth / 2;
 	    } else {
@@ -234,7 +236,7 @@ public abstract class Entity
 	    }
 	}
 	if (dx > 0) {
-	    if (topRight || bottomRight) {
+	    if ((topRight || bottomRight) && solid) {
 		dx = 0;
 		xtemp = (currCol + 1) * tileSize - cwidth / 2;
 	    } else {
@@ -250,15 +252,32 @@ public abstract class Entity
 	}
     }
 
-    public void infBounce() {
+    public void infBounce(int bs) {
 	if (isOnGround()) {
 	    //bounceSpeed -= 1;
-	    dy += bounceSpeed;
+	    dy += bs;
+	}
+    }
+
+    public void bounce(int bs) {
+	if (isOnGround()) {
+	    dy += bs;
 	}
     }
 
     public boolean isOnGround() {
 	return (!falling && !jumping && dy == 0);
+    }
+
+    public double getAngle(Point p) {
+	double angle = Math.toDegrees(Math.atan2(p.getY() - y, p.getX() - x));
+
+	if (angle < 0) {
+	    angle += 360;
+	}
+
+	return angle;
+
     }
 
     public void setLeft(boolean b) { left = b;}

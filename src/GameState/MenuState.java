@@ -3,6 +3,7 @@ package GameState;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * The state of the game when the player is using the main menu
@@ -37,6 +38,14 @@ public class MenuState extends GameState
     }
 
     @Override public void keyReleased(final int k) {
+
+    }
+
+    @Override public void mouseClicked(final MouseEvent e) {
+
+    }
+
+    @Override public void mouseMoved(final MouseEvent e) {
 
     }
 }

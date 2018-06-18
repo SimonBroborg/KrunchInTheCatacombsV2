@@ -3,6 +3,7 @@ package Entity;
 import Entity.Objects.Chest;
 import Entity.Objects.GameObject;
 import Entity.Objects.Pickups.Pickup;
+import HUD.InventoryButton;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -17,14 +18,18 @@ public class Player extends Entity
 {
     private int useRange;
     private boolean using;
+    private boolean pickingUp;
 
     public Player(TileMap tm) {
 	super(tm);
+
+	// dimensions
 	width = 40;
 	height = 40;
 	cwidth = 30;
 	cheight = 30;
 
+	// movement
 	moveSpeed = 0.7;
 	maxSpeed = 3;
 	stopSpeed = 0.4;
@@ -33,13 +38,14 @@ public class Player extends Entity
 	jumpStart = -10;
 	stopJumpSpeed = 0.3;
 
+	// use
 	useRange = 40;
 
 	sprite = new Sprite("resources/Sprites/Player/player.png");
 
     }
 
-    public void checkAct(List<GameObject> objects) {
+    public void checkAct(List<GameObject> objects, InventoryButton b) {
 	boolean canUse = false;
 	List<GameObject> newObjects = new ArrayList<>();
 	for (GameObject o : objects) {
@@ -54,10 +60,10 @@ public class Player extends Entity
 		// Use the object
 		if (canUse) {
 		    if (using) {
-			o.use(this);
+			o.use(this, b);
 			// Check if a chest is used and get its content
 			if(o instanceof Chest){
-			    newObjects.add(((Chest) o).getContent());
+			    newObjects.addAll(((Chest) o).getContent());
 			}
 		    }
 		    o.setCanUse(canUse);

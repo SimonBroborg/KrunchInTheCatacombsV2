@@ -4,6 +4,7 @@ import Entity.Sprite;
 import Main.GameComponent;
 import TileMap.Tiles.EmptyTile;
 import TileMap.Tiles.NormalTile;
+import TileMap.Tiles.WallTile;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -86,18 +87,26 @@ public class TileMap
 	    for (int x = 0; x < map[y].length; x++) {
 
 		switch (Integer.parseInt(map[y][x])) {
-		    case 00:
-			tileMap[y][x] = new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,this);
+		    case 02:
+			tileMap[y][x] =
+				new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,
+					      this);
 
 			break;
 		    case 01:
+			tileMap[y][x] = new NormalTile(new Sprite("resources/Sprites/Tiles/normalTile2.png"), x * tileSize,
+						       y * tileSize, this);
+			break;
+		    case 00:
 			tileMap[y][x] =
-				new NormalTile(new Sprite("resources/Sprites/Tiles/normalTile2.png"), x * tileSize, y * tileSize,
-					       this);
+				new WallTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,
+					     this);
 			break;
 
 		    default:
-			tileMap[y][x] = new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,this);
+			tileMap[y][x] =
+				new EmptyTile(new Sprite("resources/Sprites/Tiles/normalTile.png"), x * tileSize, y * tileSize,
+					      this);
 			System.out.println("Bad tile type! Creating empty tile!");
 
 		}
@@ -107,8 +116,9 @@ public class TileMap
     }
 
     public void draw(Graphics2D g2d) {
-	for (Tile[] tiles : tileMap) {
-	    for (Tile tile : tiles) {
+	for (int i = 0; i < tileMap.length; i++) {
+	    for (int j = 0; j < tileMap[i].length; j++) {
+		Tile tile = tileMap[i][j];
 		if (!(tile.isTransparent())) {
 		    tile.draw(g2d);
 		}

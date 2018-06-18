@@ -17,7 +17,7 @@ public class GameComponent extends JComponent
     private int FPS = 60;
     private long targetTime = 1000 / FPS;
 
-    JFrame frame = new JFrame();
+    JFrame frame = new JFrame("Krunch in the Catacombs");
 
 
     // Game state manager
@@ -39,10 +39,13 @@ public class GameComponent extends JComponent
 
 	frame.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 	frame.setLayout(new BorderLayout());
+	frame.addKeyListener(new InputHandler(gsm));
+	this.addMouseListener(new MouseHandler(gsm));
+	this.addMouseMotionListener(new MouseHandler(gsm));
 	frame.add(this, BorderLayout.CENTER);
 	frame.pack();
 	frame.setFocusable(true);
-	frame.addKeyListener(new InputHandler(gsm));
+
 	frame.setVisible(true);
     }
 

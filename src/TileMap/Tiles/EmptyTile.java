@@ -8,7 +8,7 @@ public class EmptyTile extends Tile
 {
     public EmptyTile(Sprite sprite, int x, int y, TileMap tm) {
 	super("Empty", x, y, tm);
-	transparent = false;
+	transparent = true;
 	solid = false;
 
 	this.sprite = sprite;

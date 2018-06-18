@@ -1,6 +1,7 @@
 package GameState;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,8 @@ public class GameStateManager
     private List<GameState> gameStates;
     private int currentState;
 
-    protected static final int MENUSTATE = 0;
-    protected static final int LEVEL1STATE = 1;
+    public static final int MENUSTATE = 0;
+    public static final int LEVEL1STATE = 1;
 
     public GameStateManager() {
         gameStates = new ArrayList<>();
@@ -46,6 +47,13 @@ public class GameStateManager
 
     public void keyReleased(int k){
         getCurrentState().keyReleased(k);
+    }
+
+    public void mouseClicked(MouseEvent e){
+        getCurrentState().mouseClicked(e);
+    }
+    public void mouseMoved(MouseEvent e){
+        getCurrentState().mouseMoved(e);
     }
 
     private GameState getCurrentState(){

@@ -1,6 +1,8 @@
 package Entity.Objects;
 
-import Entity.*;
+import Entity.Entity;
+import Entity.Player;
+import HUD.InventoryButton;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -8,7 +10,7 @@ import java.awt.*;
 /**
  * Different useable objects on the map
  */
-public class GameObject extends Entity
+public abstract class GameObject extends Entity
 {
     public GameObject(final TileMap tm) {
 	super(tm);
@@ -22,7 +24,7 @@ public class GameObject extends Entity
     }
 
 
-    public void use(Player player){}
+    public abstract void use(Player player, InventoryButton b);
 
     @Override public void draw(final Graphics2D g2d) {
 	setMapPosition();
