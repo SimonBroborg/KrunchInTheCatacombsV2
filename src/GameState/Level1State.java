@@ -14,6 +14,7 @@ import TileMap.TileMap;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class Level1State extends GameState
 		       GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
 	bg.setPosition(tm.getX(), tm.getY());
 
-	player.checkAct(objects);
+	player.checkAct(objects,(InventoryButton) buttons.get(0));
 
     }
 
@@ -105,10 +106,9 @@ public class Level1State extends GameState
 	    GameObject o = objects.get(i);
 	    o.update();
 	    if (o instanceof Pickup) {
-		/*if (((Pickup) o).isPickedUp()) {
-		    objects.remove(i);
-		    i--;
-		}      */
+		if (((Pickup) o).isPickedUp()) {
+		    ((Pickup) o).addToInventory();
+		}
 	    }
 	}
     }
@@ -125,13 +125,13 @@ public class Level1State extends GameState
 
 
 	// flashlight around player effect 
-	/*Point2D center = new Point2D.Float((int) tm.getX() + player.getX(), (int) tm.getY() + player.getY());
+	Point2D center = new Point2D.Float((int) tm.getX() + player.getX(), (int) tm.getY() + player.getY());
 	float[] dist = { 0.0f, 1.0f };
 	Color[] colors = { new Color(0.0f, 0.0f, 0.0f, 0.0f), Color.black };
 	RadialGradientPaint p = new RadialGradientPaint(center, 200, dist, colors);
 	g2d.setPaint(p);
 	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .70f));
-	g2d.fillRect(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE);  */
+	g2d.fillRect(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE);
 
 	for (int i = 0; i < messages.size(); i++) {
 	    messages.get(i).draw(g2d);

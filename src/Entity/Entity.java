@@ -297,7 +297,7 @@ public abstract class Entity
 	}
 
 	if (facingRight) {
-	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), null);
+	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
 	} else {
 	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2 + width), (int) (y + ymap - height / 2), -width,
 			  height, null);
