@@ -2,8 +2,7 @@ package Entity;
 
 import Entity.Objects.Chest;
 import Entity.Objects.GameObject;
-import Entity.Objects.Pickups.Pickup;
-import HUD.InventoryButton;
+import HUD.Inventory;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -13,21 +12,21 @@ import java.util.List;
 /**
  *
  */
-@SuppressWarnings("AssignmentToSuperclassField")
+@SuppressWarnings({ "AssignmentToSuperclassField", "MagicNumber" })
 public class Player extends Entity
 {
     private int useRange;
     private boolean using;
-    private boolean pickingUp;
+    private Inventory inventory;
 
     public Player(TileMap tm) {
 	super(tm);
 
 	// dimensions
 	width = 40;
-	height = 90;
+	height = 40;
 	cwidth = 30;
-	cheight = 80;
+	cheight = 30;
 
 	// movement
 	moveSpeed = 0.7;
@@ -38,20 +37,24 @@ public class Player extends Entity
 	jumpStart = -10;
 	stopJumpSpeed = 0.3;
 
-	// use
+	// use of things
 	useRange = 40;
 
 	sprite = new Sprite("resources/Sprites/Player/player.png");
 
+	inventory = new Inventory();
+
     }
 
-    public void checkAct(List<GameObject> objects, InventoryButton b) {
+    public void checkAct(List<GameObject> objects) {
 	boolean canUse = false;
 	List<GameObject> newObjects = new ArrayList<>();
 	for (GameObject o : objects) {
 
+	    // If the object can be used in some way
 	    if (o.isUsable()) {
-		// Check if the object can be used
+
+		// Check if the object can be used ( is in range for the player )
 		if (((o.getX() > x && o.getX() < x + useRange) || (o.getX() < x && o.getX() > x - useRange)) &&
 		    o.getY() > y - height / 2 && o.getY() < y + height / 2) {
 		    canUse = true;
@@ -60,7 +63,7 @@ public class Player extends Entity
 		// Use the object
 		if (canUse) {
 		    if (using) {
-			o.use(this, b);
+			o.use();
 			// Check if a chest is used and get its content
 			if(o instanceof Chest){
 			    newObjects.addAll(((Chest) o).getContent());
@@ -73,6 +76,8 @@ public class Player extends Entity
 		}
 	    }
 	}
+
+	// Add new objects to the already existing object list
 	objects.addAll(newObjects);
 	newObjects.clear();
     }
@@ -84,11 +89,17 @@ public class Player extends Entity
 	setPosition(xtemp, ytemp);
 	if (right) facingRight = true;
 	if (left) facingRight = false;
+
+	inventory.update();
     }
 
     public void draw(Graphics2D g2d) {
 	setMapPosition();
 	super.draw(g2d);
+    }
+
+    public Inventory getInventory() {
+	return inventory;
     }
 
     public void setActing(final boolean acting) {

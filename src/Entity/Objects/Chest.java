@@ -1,9 +1,7 @@
 package Entity.Objects;
 
 import Entity.Objects.Pickups.Pickup;
-import Entity.Player;
 import Entity.Sprite;
-import HUD.InventoryButton;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -46,7 +44,7 @@ public class Chest extends GameObject
 	contents.add(p);
     }
 
-    @Override public void use(Player player, InventoryButton b) {
+    @Override public void use() {
 
 	// The chest will open if it was closed
 	if (!opened) {

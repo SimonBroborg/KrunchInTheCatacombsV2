@@ -1,9 +1,8 @@
 package Entity.Objects.Pickups;
 
 import Entity.Objects.GameObject;
-import Entity.Player;
 import Entity.Sprite;
-import HUD.InventoryButton;
+import HUD.Inventory;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -13,7 +12,6 @@ public class Pickup extends GameObject
 {
     private boolean bouncedOnce;
     private boolean pickedUp;
-    private boolean getCollected;
 
     public Pickup(final TileMap tm) {
 	super(tm);
@@ -33,8 +31,7 @@ public class Pickup extends GameObject
 	// flags
 	bouncedOnce = false;
 	usable = false;
-	getCollected = false;
-
+	remove = false;
     }
 
     public void exitChest() {
@@ -53,21 +50,29 @@ public class Pickup extends GameObject
 	    usable = false;
 	    canUse = false;
 	    solid = false;
-	    addToInventory();
 	}
 
 	super.update();
     }
 
-
-    public void addToInventory() {
-	Point p = new Point(40 - (int) tm.getX(), 40 - (int) tm.getY());
-	setVector(15 * Math.cos(Math.toRadians(getAngle(p))), 15 * Math.sin(Math.toRadians(getAngle(p))));
-    }
-
-    public void use(final Player player, InventoryButton b) {
+    @Override public void use() {
 	pickedUp = true;
     }
+
+    // The object flies to the position of the inventory
+    public void addToInventory(Inventory inventory) {
+	Point p = new Point(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY());
+	setVector(15 * Math.cos(Math.toRadians(getAngle(p))), 15 * Math.sin(Math.toRadians(getAngle(p))));
+
+	Rectangle rect =
+		new Rectangle(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY(),
+			      inventory.getButton().getWidth(), inventory.getButton().getHeight());
+	if (this.getRectangle().intersects(rect)) {
+	    remove = true;
+	    inventory.add(this);
+	}
+    }
+
 
     public boolean hasBounced() {
 	return bouncedOnce;
@@ -76,4 +81,5 @@ public class Pickup extends GameObject
     public boolean isPickedUp() {
 	return pickedUp;
     }
+
 }

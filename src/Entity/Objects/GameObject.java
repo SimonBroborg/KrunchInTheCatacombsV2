@@ -1,8 +1,6 @@
 package Entity.Objects;
 
 import Entity.Entity;
-import Entity.Player;
-import HUD.InventoryButton;
 import TileMap.TileMap;
 
 import java.awt.*;
@@ -12,6 +10,7 @@ import java.awt.*;
  */
 public abstract class GameObject extends Entity
 {
+    protected boolean remove;
     public GameObject(final TileMap tm) {
 	super(tm);
     }
@@ -24,10 +23,14 @@ public abstract class GameObject extends Entity
     }
 
 
-    public abstract void use(Player player, InventoryButton b);
+    public abstract void use();
 
     @Override public void draw(final Graphics2D g2d) {
 	setMapPosition();
 	super.draw(g2d);
+    }
+
+    public boolean shouldRemove() {
+	return remove;
     }
 }

@@ -5,7 +5,6 @@ import Entity.Objects.GameObject;
 import Entity.Objects.Pickups.Pickup;
 import Entity.Player;
 import HUD.GameButton;
-import HUD.InventoryButton;
 import Main.GameComponent;
 import Main.Message;
 import TileMap.Background;
@@ -31,6 +30,8 @@ public class Level1State extends GameState
     private List<Message> messages;
     private List<GameButton> buttons;
 
+    private boolean restart;
+
     private Background bg;
 
     public Level1State(GameStateManager gsm) {
@@ -38,12 +39,8 @@ public class Level1State extends GameState
 	//init();
     }
 
-    @Override public void init() {
-	tm = new TileMap(40);
-	player = new Player(tm);
-	player.setPosition(100, 100);
-
-	bg = new Background("resources/Backgrounds/background.jpg", 0);
+    private void loadLevel() {
+	restart = false;
 
 	// init lists
 	objects = new ArrayList<>();
@@ -51,13 +48,14 @@ public class Level1State extends GameState
 	buttons = new ArrayList<>();
 
 
-	InventoryButton b = new InventoryButton(40, 40, gsm);
+	player = new Player(tm);
+	player.setPosition(100, 100);
 
-	buttons.add(b);
+
+	// Add objects to the level
 	Chest c = new Chest(tm);
 	c.setPosition(200, player.getY());
 	objects.add(c);
-
 
 	c = new Chest(tm);
 	c.setPosition(400, player.getY() - 200);
@@ -70,6 +68,15 @@ public class Level1State extends GameState
 	messages.add(m);
 	tm.loadMapFile("Resources/Maps/level1.txt");
 	tm.loadTileMap();
+    }
+
+    @Override public void init() {
+	restart = false;
+
+	tm = new TileMap(40);
+	bg = new Background("resources/Backgrounds/background.jpg", 0);
+
+	loadLevel();
 
     }
 
@@ -85,8 +92,11 @@ public class Level1State extends GameState
 		       GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
 	bg.setPosition(tm.getX(), tm.getY());
 
-	player.checkAct(objects,(InventoryButton) buttons.get(0));
+	player.checkAct(objects);
 
+	if (restart) {
+	    loadLevel();
+	}
     }
 
     private void updateMessages() {
@@ -107,8 +117,11 @@ public class Level1State extends GameState
 	    o.update();
 	    if (o instanceof Pickup) {
 		if (((Pickup) o).isPickedUp()) {
-		    ((Pickup) o).addToInventory();
+		    ((Pickup) o).addToInventory(player.getInventory());
 		}
+	    }
+	    if (o.shouldRemove()) {
+		objects.remove(i);
 	    }
 	}
     }
@@ -122,7 +135,6 @@ public class Level1State extends GameState
 	}
 
 	player.draw(g2d);
-
 
 	// flashlight around player effect 
 	Point2D center = new Point2D.Float((int) tm.getX() + player.getX(), (int) tm.getY() + player.getY());
@@ -140,7 +152,10 @@ public class Level1State extends GameState
 	for (int i = 0; i < buttons.size(); i++) {
 	    buttons.get(i).draw(g2d);
 	}
+
+	player.getInventory().draw(g2d);
 	g2d.dispose();
+
     }
 
     @Override public void keyPressed(final int k) {
@@ -149,8 +164,12 @@ public class Level1State extends GameState
 	if (k == KeyEvent.VK_W) player.setUp(true);
 	if (k == KeyEvent.VK_S) player.setDown(true);
 	if (k == KeyEvent.VK_SPACE) player.setJumping(true);
+
+
 	if (k == KeyEvent.VK_E) player.setActing(true);
 	if (k == KeyEvent.VK_ESCAPE) gsm.setState(GameStateManager.MENUSTATE);
+	if (k == KeyEvent.VK_P) restart = true;
+	if (k == KeyEvent.VK_TAB) player.getInventory().toggle();
     }
 
     @Override public void keyReleased(final int k) {
@@ -167,8 +186,8 @@ public class Level1State extends GameState
 	    if (buttons.get(i).isHovered()) {
 		buttons.get(i).mouseClicked(e);
 	    }
-
 	}
+
     }
 
     @Override public void mouseMoved(final MouseEvent e) {

@@ -6,12 +6,15 @@ import GameState.GameStateManager;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ */
 public class GameComponent extends JComponent
 {
     // Dimensions
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
-    public static final int SCALE =1 ;
+    public static final int SCALE = 2;
 
     public volatile boolean running;
     private int FPS = 60;
@@ -40,8 +43,9 @@ public class GameComponent extends JComponent
 	frame.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 	frame.setLayout(new BorderLayout());
 	frame.addKeyListener(new InputHandler(gsm));
-	this.addMouseListener(new MouseHandler(gsm));
-	this.addMouseMotionListener(new MouseHandler(gsm));
+	frame.addMouseListener(new MouseHandler(gsm));
+	frame.addMouseMotionListener(new MouseHandler(gsm));
+	frame.setFocusTraversalKeysEnabled(false); // this enables TAB to be listened to
 	frame.add(this, BorderLayout.CENTER);
 	frame.pack();
 	frame.setFocusable(true);

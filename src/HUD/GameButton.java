@@ -21,36 +21,82 @@ public abstract class GameButton
     protected int height;
 
     protected boolean hovered;
+    protected boolean pulsing;
 
-    public GameButton(int x, int y, GameStateManager gsm){
-        this.gsm = gsm;
-        this.x = x;
-        this.y = y;
+    protected boolean playAnimation;
+    protected int growth;
+    protected int growSpeed;
+    protected int growthLimit;
+
+
+    public GameButton(int x, int y) {
+	this.x = x;
+	this.y = y;
+
+	growSpeed = 2;
+	growthLimit = 20;
     }
 
-    public abstract void update();
+    public void update() {
+	if (pulsing) {
+	    width += growSpeed;
+	    height += growSpeed;
+	    x -= growSpeed / 2;
+	    y -= growSpeed / 2;
+	    growth += growSpeed;
 
-    public void draw(Graphics2D g2d){
-        if(hovered){
-            g2d.setStroke(new BasicStroke(3));
-            g2d.setColor(Color.BLUE);
-            g2d.drawRect(x, y, width, height);
-        }
-        g2d.drawImage(sprite.getImage(), x, y, null);
+	    if (growth >= growthLimit) {
+		growSpeed = -growSpeed;
+	    }
+	    if (growth == 0) {
+		pulsing = false;
+		growSpeed = -growSpeed;
+	    }
+	}
     }
 
-    public void checkHover(Point p){
-        if(p.x > x && p.x < x + width && p.y > y && p.y < y+height){
-            hovered = true;
-        }
-        else{
-            hovered = false;
-        }
+    public void draw(Graphics2D g2d) {
+	if (hovered) {
+	    g2d.setStroke(new BasicStroke(3));
+	    g2d.setColor(Color.BLUE);
+	    g2d.drawRect(x, y, width, height);
+	}
+	g2d.drawImage(sprite.getImage(), x, y, width, height, null);
+    }
+
+    public void checkHover(Point p) {
+	hovered = p.x > x && p.x < x + width && p.y > y && p.y < y + height;
+    }
+
+    public void pulse() {
+	pulsing = true;
     }
 
     public abstract void mouseClicked(MouseEvent e);
 
     public boolean isHovered() {
-        return hovered;
+	return hovered;
+    }
+
+
+    public int getX() {
+	return x;
+    }
+
+    public int getY() {
+	return y;
+    }
+
+    public int getWidth() {
+	return width;
+    }
+
+    public int getHeight() {
+	return height;
+    }
+
+    public Rectangle getRectangle() {
+	return new Rectangle(x, y, width, height);
     }
 }
+
