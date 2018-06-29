@@ -2,6 +2,9 @@ package Main;
 
 import java.awt.*;
 
+/**
+ *
+ */
 public class Message
 {
     private String text;
@@ -33,6 +36,4 @@ public class Message
         g2d.drawString(text, x, y);
         g2d.drawRect(x, y, width, height);
     }
-
-
 }

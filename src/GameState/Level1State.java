@@ -2,6 +2,8 @@ package GameState;
 
 import Entity.Objects.Chest;
 import Entity.Objects.GameObject;
+import Entity.Objects.Pickups.Flashlight;
+import Entity.Objects.Pickups.Pickaxe;
 import Entity.Objects.Pickups.Pickup;
 import Entity.Player;
 import HUD.GameButton;
@@ -16,7 +18,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  *
@@ -47,20 +48,18 @@ public class Level1State extends GameState
 	messages = new ArrayList<>();
 	buttons = new ArrayList<>();
 
-
 	player = new Player(tm);
 	player.setPosition(100, 100);
 
-
 	// Add objects to the level
-	Chest c = new Chest(tm);
+	Chest c = new Chest(tm, new Pickaxe(tm));
 	c.setPosition(200, player.getY());
 	objects.add(c);
 
-	c = new Chest(tm);
+	c = new Chest(tm, new Pickaxe(tm));
 	c.setPosition(400, player.getY() - 200);
 	objects.add(c);
-	c = new Chest(tm);
+	c = new Chest(tm, new Flashlight(tm));
 	c.setPosition(850, player.getY() - 200);
 	objects.add(c);
 
@@ -77,7 +76,6 @@ public class Level1State extends GameState
 	bg = new Background("resources/Backgrounds/background.jpg", 0);
 
 	loadLevel();
-
     }
 
     @Override public void update() {
@@ -85,7 +83,7 @@ public class Level1State extends GameState
 
 	// update lists
 	updateObjects();
-	updateMessages();
+	//updateMessages();
 	updateButtons();
 
 	tm.setPosition(GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(),
@@ -144,6 +142,8 @@ public class Level1State extends GameState
 	g2d.setPaint(p);
 	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .70f));
 	g2d.fillRect(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE);
+	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+
 
 	for (int i = 0; i < messages.size(); i++) {
 	    messages.get(i).draw(g2d);
@@ -154,6 +154,7 @@ public class Level1State extends GameState
 	}
 
 	player.getInventory().draw(g2d);
+
 	g2d.dispose();
 
     }
@@ -164,7 +165,6 @@ public class Level1State extends GameState
 	if (k == KeyEvent.VK_W) player.setUp(true);
 	if (k == KeyEvent.VK_S) player.setDown(true);
 	if (k == KeyEvent.VK_SPACE) player.setJumping(true);
-
 
 	if (k == KeyEvent.VK_E) player.setActing(true);
 	if (k == KeyEvent.VK_ESCAPE) gsm.setState(GameStateManager.MENUSTATE);

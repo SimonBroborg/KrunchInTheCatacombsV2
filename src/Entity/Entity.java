@@ -5,6 +5,9 @@ import TileMap.TileMap;
 
 import java.awt.*;
 
+/**
+ *
+ */
 public abstract class Entity
 {
     // position and vector
@@ -299,8 +302,11 @@ public abstract class Entity
 	if (facingRight) {
 	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
 	} else {
-	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2 + width), (int) (y + ymap - height / 2), -width,
-			  height, null);
+	    g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2 + width), (int) (y + ymap - height / 2), -width, height, null);
 	}
+    }
+
+    public Sprite getSprite() {
+	return sprite;
     }
 }

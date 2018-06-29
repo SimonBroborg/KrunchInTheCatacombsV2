@@ -15,11 +15,11 @@ public class Chest extends GameObject
     private List<Pickup> contents;
 
 
-    public Chest(final TileMap tm) {
+    public Chest(final TileMap tm, Pickup pickup) {
 	super(tm);
 	sprite = new Sprite("resources/Sprites/Objects/Chest/AChest1.png");
 	contents = new ArrayList<>();
-	addContent(new Pickup(tm));
+	addContent(pickup);
 	//addContent(new Pickup(tm));
 	//addContent(new Pickup(tm));
 	//addContent(new Pickup(tm));

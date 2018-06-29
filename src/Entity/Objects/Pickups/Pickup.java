@@ -8,14 +8,17 @@ import TileMap.TileMap;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ *
+ */
 public class Pickup extends GameObject
 {
     private boolean bouncedOnce;
     private boolean pickedUp;
 
-    public Pickup(final TileMap tm) {
+    public Pickup(final TileMap tm, String spritePath) {
 	super(tm);
-	sprite = new Sprite("resources/Sprites/Objects/Pickups/pickaxe2.png");
+	sprite = new Sprite(spritePath);
 
 	// dimensions
 	height = sprite.getImage().getHeight();
@@ -61,18 +64,22 @@ public class Pickup extends GameObject
 
     // The object flies to the position of the inventory
     public void addToInventory(Inventory inventory) {
-	Point p = new Point(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY());
-	setVector(15 * Math.cos(Math.toRadians(getAngle(p))), 15 * Math.sin(Math.toRadians(getAngle(p))));
+	if (!inventory.isFull()) {
+	    int speed = 30;
+	    Point p = new Point(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY());
+	    setVector(speed * Math.cos(Math.toRadians(getAngle(p))), speed * Math.sin(Math.toRadians(getAngle(p))));
 
-	Rectangle rect =
-		new Rectangle(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY(),
-			      inventory.getButton().getWidth(), inventory.getButton().getHeight());
-	if (this.getRectangle().intersects(rect)) {
-	    remove = true;
-	    inventory.add(this);
+	    Rectangle rect = new Rectangle(inventory.getButton().getX() - (int) tm.getX(),
+					   inventory.getButton().getY() - (int) tm.getY(), inventory.getButton().getWidth(),
+					   inventory.getButton().getHeight());
+	    if (this.getRectangle().intersects(rect)) {
+		remove = true;
+		inventory.add(this);
+	    }
+	} else {
+	    pickedUp = false;
 	}
     }
-
 
     public boolean hasBounced() {
 	return bouncedOnce;

@@ -11,7 +11,7 @@ public class InventoryButton extends GameButton
 {
     public InventoryButton(int x, int y) {
 	super(x, y);
-	sprite = new Sprite("resources/Sprites/Buttons/invButton2.png");
+	sprite = new Sprite("resources/Sprites/Objects/Chest/AChest1.png");
 
 	width = sprite.getWidth();
 	height = sprite.getHeight();

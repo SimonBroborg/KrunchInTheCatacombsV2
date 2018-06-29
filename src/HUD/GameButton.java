@@ -23,7 +23,6 @@ public abstract class GameButton
     protected boolean hovered;
     protected boolean pulsing;
 
-    protected boolean playAnimation;
     protected int growth;
     protected int growSpeed;
     protected int growthLimit;
@@ -97,6 +96,12 @@ public abstract class GameButton
 
     public Rectangle getRectangle() {
 	return new Rectangle(x, y, width, height);
+    }
+
+    public void setSprite(final Sprite sprite) {
+	this.sprite = sprite;
+	width = sprite.getWidth();
+	height = sprite.getHeight();
     }
 }
 
