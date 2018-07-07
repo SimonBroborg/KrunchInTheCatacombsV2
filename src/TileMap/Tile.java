@@ -4,8 +4,7 @@ import Entity.Sprite;
 
 import java.awt.*;
 
-public class Tile
-{
+public class Tile {
     // position
     protected double x;
     protected double y;
@@ -21,38 +20,38 @@ public class Tile
     protected TileMap tm;
 
     public Tile(String type, double x, double y, TileMap tm) {
-	this.type = type;
-	this.x = x;
-	this.y = y;
-	this.tileSize = tm.getTileSize();
-	this.tm = tm;
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.tileSize = tm.getTileSize();
+        this.tm = tm;
     }
 
     public boolean isSolid() {
-	return solid;
+        return solid;
     }
 
     public boolean isTransparent() {
-	return transparent;
+        return transparent;
     }
 
     public String getType() {
-	return type;
+        return type;
     }
 
     public double getX() {
-	return x;
+        return x;
     }
 
     public double getY() {
-	return y;
+        return y;
     }
 
     public Rectangle getRectangle() {
-	return new Rectangle((int) x, (int) y, tileSize, tileSize);
+        return new Rectangle((int) x, (int) y, tileSize, tileSize);
     }
 
     public void draw(Graphics2D g2d) {
-	g2d.drawImage(sprite.getImage(), (int)( x + tm.getX()), (int) (y + tm.getY()), tileSize, tileSize,null);
+        g2d.drawImage(sprite.getImage(), (int) (x + tm.getX()), (int) (y + tm.getY()), tileSize, tileSize, null);
     }
 }

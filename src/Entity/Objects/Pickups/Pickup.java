@@ -11,82 +11,91 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  *
  */
-public class Pickup extends GameObject
-{
+public abstract class Pickup extends GameObject {
     private boolean bouncedOnce;
     private boolean pickedUp;
 
-    public Pickup(final TileMap tm, String spritePath) {
-	super(tm);
-	sprite = new Sprite(spritePath);
+    private boolean inInventory;
 
-	// dimensions
-	height = sprite.getImage().getHeight();
-	width = sprite.getImage().getWidth();
-	cheight = height - 10;
-	cwidth = width - 10;
+    protected Pickup(final TileMap tm, String spritePath) {
+        super(tm);
+        sprite = new Sprite(spritePath);
 
-	// movement
-	fallSpeed = 0.5;
-	maxFallSpeed = 10;
-	bounceSpeed = -10;
+        // dimensions
+        height = sprite.getImage().getHeight();
+        width = sprite.getImage().getWidth();
+        cheight = height - 10;
+        cwidth = width - 10;
 
-	// flags
-	bouncedOnce = false;
-	usable = false;
-	remove = false;
+        // movement
+        fallSpeed = 0.5;
+        maxFallSpeed = 10;
+        bounceSpeed = -10;
+
+        // flags
+        bouncedOnce = false;
+        usable = false;
+        remove = false;
     }
 
     public void exitChest() {
-	int randomNum = ThreadLocalRandom.current().nextInt(45, 135 + 1);
-	setVector(Math.cos(randomNum), bounceSpeed);
-	bouncedOnce = true;
+        int randomNum = ThreadLocalRandom.current().nextInt(45, 135 + 1);
+        setVector(Math.cos(randomNum), bounceSpeed);
+        bouncedOnce = true;
     }
 
-    @Override public void update() {
-	// Makes sure the pickup stops moving
-	if (isOnGround()) {
-	    setVector(0, 0);
-	    usable = true;
-	}
-	if (pickedUp) {
-	    usable = false;
-	    canUse = false;
-	    solid = false;
-	}
+    @Override
+    public void update() {
+        // Makes sure the pickup stops moving
+        if (isOnGround()) {
+            setVector(0, 0);
+            usable = true;
+        }
+        if (pickedUp) {
+            usable = false;
+            canUse = false;
+            solid = false;
+        }
 
-	super.update();
+        super.update();
     }
 
-    @Override public void use() {
-	pickedUp = true;
+    @Override
+    public void pickUp() {
+        pickedUp = true;
     }
 
     // The object flies to the position of the inventory
     public void addToInventory(Inventory inventory) {
-	if (!inventory.isFull()) {
-	    int speed = 30;
-	    Point p = new Point(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY());
-	    setVector(speed * Math.cos(Math.toRadians(getAngle(p))), speed * Math.sin(Math.toRadians(getAngle(p))));
+        if (!inventory.isFull()) {
+            int speed = 30;
+            Point p = new Point(inventory.getButton().getX() - (int) tm.getX(), inventory.getButton().getY() - (int) tm.getY());
+            setVector(speed * Math.cos(Math.toRadians(getAngle(p))), speed * Math.sin(Math.toRadians(getAngle(p))));
 
-	    Rectangle rect = new Rectangle(inventory.getButton().getX() - (int) tm.getX(),
-					   inventory.getButton().getY() - (int) tm.getY(), inventory.getButton().getWidth(),
-					   inventory.getButton().getHeight());
-	    if (this.getRectangle().intersects(rect)) {
-		remove = true;
-		inventory.add(this);
-	    }
-	} else {
-	    pickedUp = false;
-	}
+            Rectangle rect = new Rectangle(inventory.getButton().getX() - (int) tm.getX(),
+                    inventory.getButton().getY() - (int) tm.getY(), inventory.getButton().getWidth(),
+                    inventory.getButton().getHeight());
+            if (this.getRectangle().intersects(rect)) {
+                remove = true;
+                inInventory = true;
+                inventory.add(this);
+            }
+        } else {
+            pickedUp = false;
+        }
     }
 
+    public abstract void use();
+
     public boolean hasBounced() {
-	return bouncedOnce;
+        return bouncedOnce;
     }
 
     public boolean isPickedUp() {
-	return pickedUp;
+        return pickedUp;
     }
 
+    public boolean isInInventory() {
+        return inInventory;
+    }
 }

@@ -23,7 +23,7 @@ public abstract class GameObject extends Entity
     }
 
 
-    public abstract void use();
+    public abstract void pickUp();
 
     @Override public void draw(final Graphics2D g2d) {
 	setMapPosition();

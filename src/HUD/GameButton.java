@@ -6,8 +6,7 @@ import GameState.GameStateManager;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class GameButton
-{
+public abstract class GameButton {
     // misc
     protected GameStateManager gsm;
     protected Sprite sprite;
@@ -29,79 +28,74 @@ public abstract class GameButton
 
 
     public GameButton(int x, int y) {
-	this.x = x;
-	this.y = y;
+        this.x = x;
+        this.y = y;
 
-	growSpeed = 2;
-	growthLimit = 20;
+        growSpeed = 2;
+        growthLimit = 20;
     }
 
     public void update() {
-	if (pulsing) {
-	    width += growSpeed;
-	    height += growSpeed;
-	    x -= growSpeed / 2;
-	    y -= growSpeed / 2;
-	    growth += growSpeed;
+        if (pulsing) {
+            width += growSpeed;
+            height += growSpeed;
+            x -= growSpeed / 2;
+            y -= growSpeed / 2;
+            growth += growSpeed;
 
-	    if (growth >= growthLimit) {
-		growSpeed = -growSpeed;
-	    }
-	    if (growth == 0) {
-		pulsing = false;
-		growSpeed = -growSpeed;
-	    }
-	}
+            if (growth >= growthLimit) {
+                growSpeed = -growSpeed;
+            }
+            if (growth == 0) {
+                pulsing = false;
+                growSpeed = -growSpeed;
+            }
+        }
     }
 
     public void draw(Graphics2D g2d) {
-	if (hovered) {
-	    g2d.setStroke(new BasicStroke(3));
-	    g2d.setColor(Color.BLUE);
-	    g2d.drawRect(x, y, width, height);
-	}
-	g2d.drawImage(sprite.getImage(), x, y, width, height, null);
+        g2d.drawImage(sprite.getImage(), x, y, width, height, null);
     }
 
     public void checkHover(Point p) {
-	hovered = p.x > x && p.x < x + width && p.y > y && p.y < y + height;
+        hovered = p.x > x && p.x < x + width && p.y > y && p.y < y + height;
     }
 
     public void pulse() {
-	pulsing = true;
+        pulsing = true;
     }
 
     public abstract void mouseClicked(MouseEvent e);
 
     public boolean isHovered() {
-	return hovered;
+        return hovered;
     }
 
 
     public int getX() {
-	return x;
+        return x;
     }
 
     public int getY() {
-	return y;
+        return y;
     }
 
     public int getWidth() {
-	return width;
+        return width;
     }
 
     public int getHeight() {
-	return height;
+        return height;
     }
 
     public Rectangle getRectangle() {
-	return new Rectangle(x, y, width, height);
+        return new Rectangle(x, y, width, height);
     }
 
     public void setSprite(final Sprite sprite) {
-	this.sprite = sprite;
-	width = sprite.getWidth();
-	height = sprite.getHeight();
+        this.sprite = sprite;
+        width = sprite.getWidth();
+        height = sprite.getHeight();
     }
 }
 

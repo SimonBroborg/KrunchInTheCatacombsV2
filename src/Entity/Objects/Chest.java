@@ -44,7 +44,7 @@ public class Chest extends GameObject
 	contents.add(p);
     }
 
-    @Override public void use() {
+    @Override public void pickUp() {
 
 	// The chest will open if it was closed
 	if (!opened) {
