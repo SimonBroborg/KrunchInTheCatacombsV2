@@ -16,6 +16,9 @@ public class GameComponent extends JComponent {
     public static final int HEIGHT = 480;
     public static final int SCALE = 2;
 
+    public static final int SCALED_HEIGHT = HEIGHT * SCALE;
+    public static final int SCALED_WIDTH = WIDTH * SCALE;
+
     public volatile boolean running;
     private int FPS = 60;
     private long targetTime = 1000 / FPS;

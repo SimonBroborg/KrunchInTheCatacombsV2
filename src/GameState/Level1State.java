@@ -12,12 +12,10 @@ import Main.GameComponent;
 import Main.Message;
 import TileMap.Background;
 import TileMap.TileMap;
-import sun.security.krb5.internal.ktab.KeyTabEntry;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,8 +137,8 @@ public class Level1State extends GameState {
 
     @Override
     public void draw(final Graphics2D g2d) {
-        bg.draw(g2d);
-        tm.draw(g2d);
+	//bg.draw(g2d);
+	//tm.draw(g2d);
 
         fl.draw(g2d);
 
@@ -157,7 +155,6 @@ public class Level1State extends GameState {
         for (int i = 0; i < buttons.size(); i++) {
             buttons.get(i).draw(g2d);
         }
-
 
         // Makes sure the inventory isn't covered by the darkness
         player.getInventory().draw(g2d);
@@ -210,7 +207,6 @@ public class Level1State extends GameState {
                 buttons.get(i).mouseClicked(e);
             }
         }
-
     }
 
     @Override
