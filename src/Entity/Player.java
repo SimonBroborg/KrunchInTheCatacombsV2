@@ -88,8 +88,9 @@ public class Player extends Entity {
     }
 
     public boolean inRange(int ox, int oy, int range){
-        return ((ox > x && ox < x + range) || (ox < x && ox > x - range)) &&
-                oy  > y - height / 2  && oy < y + height / 2;
+	return Math.hypot(ox - x, oy - y) < range;
+        /*return ((ox > x && ox < x + range) || (ox < x && ox > x - range)) &&
+                oy  > y - height / 2  && oy < y + height / 2;*/
     }
 
     public void useItem(){

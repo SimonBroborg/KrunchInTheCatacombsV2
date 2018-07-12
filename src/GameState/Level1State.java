@@ -138,7 +138,7 @@ public class Level1State extends GameState {
     @Override
     public void draw(final Graphics2D g2d) {
 	//bg.draw(g2d);
-	//tm.draw(g2d);
+        tm.draw(g2d);
 
         fl.draw(g2d);
 

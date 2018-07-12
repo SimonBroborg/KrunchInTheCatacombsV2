@@ -19,4 +19,8 @@ public class Segment
     public Point getEnd() {
 	return end;
     }
+
+    public void draw(Graphics2D g2d) {
+	g2d.drawLine(start.x, start.y, end.x, end.y);
+    }
 }
