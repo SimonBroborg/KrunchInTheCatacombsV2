@@ -5,8 +5,6 @@ import TileMap.Tile;
 import TileMap.TileMap;
 
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
 public class FlashLight
 {
     private static final int RANGE = 300;
-    private List<Segment> segments;
+
     private TileMap tm;
 
     private int x;
@@ -27,26 +25,44 @@ public class FlashLight
     private int targetY;
 
     private int offsetAngle;
+    // The angle to which the cursor is pointing
+    private double targetAngle;
+
+    // The angles in which the lines should be checked
+    private List<Float> uniAngles;
+    private List<Segment> segments;
+    private List<Point> points;
+    private List<Point> intersections;
 
     private Player player;
 
     public FlashLight(TileMap tm, Player player) {
 	this.tm = tm;
 	this.player = player;
-	segments = new ArrayList<>();
 	x = player.getX() + (int) tm.getX();
 	y = player.getY() + (int) tm.getY();
 	targetX = 0;
 	targetY = 0;
 
+	segments = new ArrayList<>();
+	uniAngles = new ArrayList<>();
+	points = new ArrayList<>();
+	intersections = new ArrayList<>();
+
+	// How broad the flashlight is.
 	offsetAngle = 20;
     }
 
     public void update() {
-
 	// set to the players position
 	x = player.getX() + (int) tm.getX();
 	y = player.getY() + (int) tm.getY();
+
+	targetAngle = getAngle(new Point(targetX, targetY), new Point(x, y));
+
+	// Create segments from tiles
+	setSegments();
+
     }
 
     public static double normalAbsoluteAngleDegrees(double angle) {
@@ -54,14 +70,12 @@ public class FlashLight
     }
 
     public void setSegments() {
-	// contains all the line segments
 	segments = new ArrayList<>();
-
 	// create segments from each tile
 	for (Tile[] tiles : tm.getTiles()) {
 	    for (Tile tile : tiles) {
 		// If the flashlight can collide with the tile
-		if (tile.isSolid() && player.inRange((int) tile.getX(), (int) tile.getY(), RANGE + 200)) {
+		if (tile.isSolid() && player.inRange((int) tile.getX(), (int) tile.getY(), RANGE + 50)) {
 		    // Get the bounding box rect from the tile
 		    Rectangle rect = tile.getRectangle();
 
@@ -114,45 +128,24 @@ public class FlashLight
 		}
 	    }
 	}
-	segments.add(new Segment(new Point(0, 0), new Point(GameComponent.SCALED_WIDTH, 0)));
-	segments.add(new Segment(new Point(GameComponent.SCALED_WIDTH, 0),
-				 new Point(GameComponent.SCALED_WIDTH, GameComponent.SCALED_HEIGHT)));
-	segments.add(new Segment(new Point(GameComponent.SCALED_WIDTH, GameComponent.SCALED_HEIGHT),
-				 new Point(0, GameComponent.SCALED_HEIGHT)));
-	segments.add(new Segment(new Point(0, GameComponent.SCALED_HEIGHT), new Point(0, 0)));
+
+	setPoints();
+	setAngles();
+	setIntersections();
     }
 
-    public void draw(Graphics2D g2d) {
-	// Points where the intersections happen
-	List<Point> testIntersection = new ArrayList<>();
-
-	// The angle to which the cursor is pointing
-	double targetAngle = getAngle(new Point(targetX, targetY), new Point(x, y));
-
-	// Create segments from tiles
-	setSegments();
-
-	// Sets points in the corners of the tiles
-	List<Point> points = new ArrayList<>();
-	for (Segment segment : segments) {
+    public void setPoints() {
+	points = new ArrayList<>();
+	// Sets points in the points of the segments
+	for (int i = 0; i < segments.size(); i++) {
+	    Segment segment = segments.get(i);
 	    points.add(segment.getStart());
 	    points.add(segment.getEnd());
-
-	    segment.draw(g2d);
 	}
+    }
 
-	// The angles in which the lines should be checked
-	List<Float> uniAngles = new ArrayList<>();
-	
-	// The outer line and the target line
-	g2d.drawLine(x, y, x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle))),
-		     y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle))));
-	g2d.drawLine(x, y, x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle + offsetAngle))),
-		     y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle + offsetAngle))));
-	g2d.drawLine(x, y, x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle - offsetAngle))),
-		     y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle - offsetAngle))));
-
-
+    public void setAngles() {
+	uniAngles = new ArrayList<>();
 	// creates the angles between a x and y position and the set points
 	for (int i = 0; i < points.size(); i++) {
 	    Point uniquePoint = points.get(i);
@@ -162,9 +155,12 @@ public class FlashLight
 	    uniAngles.add(Float.valueOf((float) (angle - 0.00001)));
 	    uniAngles.add(Float.valueOf((float) (angle + 0.00001)));
 	}
+    }
 
-	for (Float uniAngle : uniAngles) {
-	    float angle = uniAngle;
+    public void setIntersections() {
+	intersections = new ArrayList<>();
+	for (int i = 0; i < uniAngles.size(); i++) {
+	    float angle = uniAngles.get(i);
 
 	    // Calculate dx & dy from angle
 	    double dx = Math.toDegrees(Math.cos(angle));
@@ -173,12 +169,14 @@ public class FlashLight
 	    // Find closest intersection
 	    Point closestIntersection = null;
 	    double closestDistance = 0;
-	    for (Segment segment : segments) {
+	    for (int j = 0; j < segments.size(); j++) {
+		Segment segment = segments.get(j);
+
 		if (closestIntersection != null)
 		    closestDistance = Math.hypot(x - closestIntersection.x, y - closestIntersection.y);
 
-		Point intersect = doIntersect(segment.getStart(), segment.getEnd(), new Point(x, y),
-					      new Point((int) (targetX + dx), (int) (targetY + dy)));
+		Point intersect = checkLineIntersect(segment.getStart(), segment.getEnd(), new Point(x, y),
+						     new Point((int) (targetX + dx), (int) (targetY + dy)));
 		if (intersect == null) {
 		    continue;
 		}
@@ -191,49 +189,59 @@ public class FlashLight
 		getAngle(new Point(closestIntersection.x, closestIntersection.y), new Point(x, y)) <
 		targetAngle + offsetAngle &&
 		getAngle(new Point(closestIntersection.x, closestIntersection.y), new Point(x, y)) > targetAngle - offsetAngle)
-		testIntersection.add(closestIntersection);
+		intersections.add(closestIntersection);
+
 	}
 
-	testIntersection.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle + offsetAngle))),
-				       y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle + offsetAngle)))));
-	testIntersection.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle - offsetAngle))),
-				       y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle - offsetAngle)))));
 
-	testIntersection.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle))),
-				       y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle)))));
+	intersections.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle - offsetAngle))),
+				    y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle - offsetAngle)))));
 
-	for (int i = 0; i < testIntersection.size(); i++) {
-	    for (int j = 0; j < testIntersection.size(); j++) {
-		if (!(j + 1 >= testIntersection.size())) {
+	intersections.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle + offsetAngle))),
+				    y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle + offsetAngle)))));
+
+	intersections.add(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(targetAngle))),
+				    y + (int) (-RANGE * Math.sin(Math.toRadians(targetAngle)))));
+
+
+	// Sort the angles of the intersections based on the outer angle
+	for (int i = 0; i < intersections.size(); i++) {
+	    for (int j = 0; j < intersections.size(); j++) {
+		if (!(j + 1 >= intersections.size())) {
 		    if (normalAbsoluteAngleDegrees(
-			    getAngle(new Point(testIntersection.get(i).x, testIntersection.get(i).y), new Point(x, y)) -
-			    targetAngle - offsetAngle) > normalAbsoluteAngleDegrees(
-			    getAngle(new Point(testIntersection.get(j + 1).x, testIntersection.get(j + 1).y), new Point(x, y)) -
+			    getAngle(new Point(intersections.get(i).x, intersections.get(i).y), new Point(x, y)) - targetAngle -
+			    offsetAngle) > normalAbsoluteAngleDegrees(
+			    getAngle(new Point(intersections.get(j + 1).x, intersections.get(j + 1).y), new Point(x, y)) -
 			    targetAngle - offsetAngle)) {
-			Point tempVar = testIntersection.get(j + 1);
-			testIntersection.set(j + 1, testIntersection.get(i));
-			testIntersection.set(i, tempVar);
+			Point tempVar = intersections.get(j + 1);
+			intersections.set(j + 1, intersections.get(i));
+			intersections.set(i, tempVar);
 		    }
 		}
 	    }
 	}
+    }
 
+    public void draw(Graphics2D g2d) {
 	// Points of the intersections
-	int[] xPoints = new int[testIntersection.size() + 2];
-	int[] yPoints = new int[testIntersection.size() + 2];
+	int[] xPoints = new int[intersections.size() + 1];
+	int[] yPoints = new int[intersections.size() + 1];
 
 	xPoints[0] = x;
-	xPoints[testIntersection.size()] = x;
 	yPoints[0] = y;
-	yPoints[testIntersection.size()] = y;
 
 	// set the points to draw the polygon
-	for (int i = 1; i < testIntersection.size(); i++) {
-	    xPoints[i] = testIntersection.get(i).x;
-	    yPoints[i] = testIntersection.get(i).y;
+	for (int i = 1; i < intersections.size(); i++) {
+	    xPoints[i] = intersections.get(i).x;
+	    yPoints[i] = intersections.get(i).y;
+	    System.out.println(getAngle(intersections.get(i), new Point(x, y)));
 	}
 
-	Point2D center;
+	/*for(int i = 0; i < segments.size() ; i++){
+	    segments.get(i).draw(g2d);
+	}*/
+
+	/*Point2D center;
 	float[] dist;
 	Color[] colors;
 
@@ -249,11 +257,9 @@ public class FlashLight
 	g2d.setPaint(p);
 	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.70f));
 
-	Polygon poly = new Polygon();
-	poly.npoints = testIntersection.size() + 2;
-	poly.xpoints = xPoints;
-	poly.ypoints = yPoints;
-
+	*/
+	Polygon poly = new Polygon(xPoints, yPoints, xPoints.length - 1);
+	/*
 	Area outer = new Area(
 		new Rectangle(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE));
 	outer.subtract(new Area(poly));
@@ -264,13 +270,18 @@ public class FlashLight
 	g2d.fill(outer);
 	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
+	*/
+	g2d.draw(poly);
+
 	g2d.setStroke(new BasicStroke(2));
-	for (Point intersect : testIntersection) {
+	for (int i = 0; i < intersections.size(); i++) {
+	    Point intersect = intersections.get(i);
 	    //g2d.setColor(Color.red);
-	    //g2d.drawLine(x, y, intersect.x, intersect.y);
+	    g2d.drawLine(x, y, intersect.x, intersect.y);
 	    //g2d.fillOval((int) intersect.get("x") - 5, (int) intersect.get("y") - 5, 10, 10);
 	}
     }
+
 
     // get the angle between the
     public double getAngle(Point p1, Point p2) {
@@ -290,7 +301,7 @@ public class FlashLight
 	return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
-    public Point doIntersect(Point p1, Point q1, Point p2, Point q2) {
+    public Point checkLineIntersect(Point p1, Point q1, Point p2, Point q2) {
 	// Find the four orientations needed for general and
 	// special cases
 	float o1 = orientation(p1, q1, p2);
