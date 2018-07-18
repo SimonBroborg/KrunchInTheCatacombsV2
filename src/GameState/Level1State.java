@@ -137,15 +137,13 @@ public class Level1State extends GameState {
 
     @Override
     public void draw(final Graphics2D g2d) {
-	//bg.draw(g2d);
+	    bg.draw(g2d);
         tm.draw(g2d);
-
-        fl.draw(g2d);
 
         for (int i = 0; i < objects.size(); i++) {
             objects.get(i).draw(g2d);
         }
-
+        fl.draw(g2d);
         player.draw(g2d);
 
         for (int i = 0; i < messages.size(); i++) {
@@ -161,12 +159,6 @@ public class Level1State extends GameState {
 
         g2d.dispose();
 
-    }
-
-    // get the angle between the
-    public double getAngle(Point p) {
-        double angle = (Math.atan2(player.getY() - p.getY(), player.getX() - p.getX()));
-        return angle;
     }
 
     @Override
