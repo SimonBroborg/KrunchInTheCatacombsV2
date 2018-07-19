@@ -8,7 +8,8 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -193,7 +194,7 @@ public class FlashLight {
             checkIntersection(uniAngles.get(i));
         }*/
 
-        for (double i = -offsetAngle; i < offsetAngle; i += (float)offsetAngle * 2 / 20) {
+        for (double i = -offsetAngle; i < offsetAngle; i += (float) offsetAngle * 2 / 20) {
             double rounded = (Math.pow(Math.abs(i * 0.5), 2));
             if (!checkIntersection((float) (normalAbsoluteAngleDegrees(targetAngle + i)))) {
                 intersections.add(new Point(x + (int) (-(RANGE - rounded) * Math.cos(Math.toRadians((normalAbsoluteAngleDegrees(targetAngle + i))))),
