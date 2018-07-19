@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <entry_points version="2.0">
+      <entry_point TYPE="field" FQNAME="map.Background dx" />
+    </entry_points>
+  </component>
   <component name="HotSwapAgentPluginSettingsProvider">
     <option name="agentPath" value="C:\Users\Simon.Broborg\.IdeaIC2017.3\config\plugins\hotswap-agent-intellij-plugin\lib\agent\hotswap-agent-1.3.0.jar" />
   </component>
@@ -116,6 +121,9 @@
       </inspection_tool>
       <inspection_tool class="CastConflictsWithInstanceof" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="CastToIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="CatchMayIgnoreException" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="m_ignoreCatchBlocksWithComments" value="false" />
+      </inspection_tool>
       <inspection_tool class="ChainedEquality" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="ChannelResource" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="insideTryAllowed" value="false" />
@@ -230,7 +238,6 @@
         <option name="CHECK_METHOD_BODY" value="true" />
       </inspection_tool>
       <inspection_tool class="DefaultNotLastCaseInSwitch" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="DivideByZero" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="DollarSignInName" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="DoubleBraceInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="DoubleCheckedLocking" enabled="true" level="WARNING" enabled_by_default="true">
@@ -650,7 +657,7 @@
         </option>
         <option name="FIELD_OPTIONS">
           <value>
-            <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="public" />
+            <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
             <option name="REQUIRED_TAGS" value="" />
           </value>
         </option>
@@ -683,9 +690,6 @@
         <option name="loggerFactoryMethodName" value="getLogger,getLogger,getLog,getLogger" />
       </inspection_tool>
       <inspection_tool class="LoggingConditionDisagreesWithLogStatement" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="LoopConditionNotUpdatedInsideLoop" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="ignoreIterators" value="false" />
-      </inspection_tool>
       <inspection_tool class="LoopStatementThatDoesntLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
       <inspection_tool class="MagicNumber" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="ignoreInitialCapacity" value="true" />
@@ -857,7 +861,6 @@
       </inspection_tool>
       <inspection_tool class="PointlessBooleanExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
       <inspection_tool class="PointlessIndexOfComparison" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="PointlessNullCheck" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="ProblematicVarargsMethodOverride" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="PropertyValueSetToItself" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="ProtectedMemberInFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -961,8 +964,6 @@
       <inspection_tool class="SillyAssignmentJS" enabled="false" level="WARNING" enabled_by_default="false" />
       <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="SimplifiableIfStatement" enabled="false" level="WARNING" enabled_by_default="false" />
-      <inspection_tool class="SimplifiableJUnitAssertion" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="SimplifiedTestNGAssertion" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="SingleCharAlternation" enabled="true" level="OPTIMIZE" enabled_by_default="true" />
       <inspection_tool class="SizeReplaceableByIsEmpty" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="SleepWhileHoldingLock" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -1015,6 +1016,12 @@
           <list>
             <option value="UnusedParameters" />
             <option value="StringBufferField" />
+            <option value="MagicNumber" />
+            <option value="AssignmentToSuperclassField" />
+            <option value="BusyWait" />
+            <option value="ConstantConditions" />
+            <option value="LoopConditionNotUpdatedInsideLoop" />
+            <option value="unused" />
           </list>
         </option>
       </inspection_tool>
@@ -1052,7 +1059,6 @@
       <inspection_tool class="TestMethodIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="TestMethodWithoutAssertion" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="assertionMethods" value="org.junit.Assert,assert.*|fail.*,junit.framework.Assert,assert.*|fail.*,org.mockito.Mockito,verify.*,org.junit.rules.ExpectedException,expect.*" />
-        <option name="assertKeywordIsAssertion" value="false" />
       </inspection_tool>
       <inspection_tool class="TestNGMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -1075,7 +1081,6 @@
       <inspection_tool class="ThrownExceptionsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="m_limit" value="8" />
       </inspection_tool>
-      <inspection_tool class="ToArrayCallWithZeroLengthArrayArgument" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="TooBroadCatch" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="onlyWarnOnRootExceptions" value="true" />
         <option name="ignoreThrown" value="true" />
