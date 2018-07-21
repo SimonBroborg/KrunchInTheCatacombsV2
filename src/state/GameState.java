@@ -15,7 +15,7 @@ public interface GameState
 
     public abstract void init();
 
-    public abstract void update();
+    public abstract void update(Point mousePos);
 
     public abstract void draw(Graphics2D g2d);
 

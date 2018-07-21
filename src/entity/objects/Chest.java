@@ -1,32 +1,31 @@
 package entity.objects;
 
-import entity.objects.pickups.Pickup;
 import entity.Sprite;
+import entity.objects.pickups.Pickup;
 import map.TileMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- */
-/*
-
+ * The chest contains pickups for the player to collect.
  */
 @SuppressWarnings({"MagicNumber", "AssignmentToSuperclassField"})
 public class Chest extends GameObject {
     private boolean opened;
     private List<Pickup> content;
 
-
+    /**
+     * Creates a chest object.
+     *
+     * @param tm     the tile map which helps the chest to keep track of collisions.
+     * @param pickup specifies which type of pickup the chets contains.
+     */
     public Chest(final TileMap tm, Pickup pickup) {
         super(tm);
         sprite = new Sprite("resources/Sprites/objects/Chest/AChest1.png");
         content = new ArrayList<>();
         addContent(pickup);
-        //addContent(new Pickup(tm));
-        //addContent(new Pickup(tm));
-        //addContent(new Pickup(tm));
 
         // Movement
         fallSpeed = 0.5;
@@ -40,15 +39,23 @@ public class Chest extends GameObject {
 
         // Flags
         opened = false;
-        usable = true;
+        activatable = true;
     }
 
+    /**
+     * Adds a new pickup object to the chests content list
+     *
+     * @param p the type of pickup which should be added.
+     */
     public void addContent(Pickup p) {
         content.add(p);
     }
 
+    /**
+     * Opens the chest and reveals it's content.
+     */
     @Override
-    public void pickUp() {
+    public void activate() {
 
         // The chest will open if it was closed
         if (!opened) {
@@ -61,27 +68,32 @@ public class Chest extends GameObject {
             for (int i = 0; i < content.size(); i++) {
                 content.get(i).setPosition(this.x, this.y);
             }
-            //content = new Pickup(tm);
-            //content.setPosition(this.x, this.y);
+
         }
     }
 
+    /**
+     * Updates the chests position and checks if it's emptied.
+     */
     @Override
     public void update() {
-
         if (opened) {
             for (int i = 0; i < content.size(); i++) {
                 if (!content.get(i).hasBounced()) {
                     content.get(i).exitChest();
                 }
             }
-            canUse = false;
-            usable = false;
+            activatable = false;
         }
 
         super.update();
     }
 
+    /**
+     * Get's the  content of the chest
+     *
+     * @return a list containing the content
+     */
     public List<Pickup> getContent() {
         return content;
     }

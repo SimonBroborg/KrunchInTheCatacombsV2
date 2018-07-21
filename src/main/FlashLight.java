@@ -45,14 +45,22 @@ public class FlashLight {
     public FlashLight(TileMap tm, Player player) {
         this.tm = tm;
         this.player = player;
+
+        // The center of the flashlight is based on the playcers position
         x = player.getX() + (int) tm.getX();
         y = player.getY() + (int) tm.getY();
+
+        // Where the flashlight is pointing towards
         targetX = 0;
         targetY = 0;
 
+        // Contains line segments which the flashlight lines can intersect with
         segments = new ArrayList<>();
+
+        // The points the the flashlight lines intersect with the map tiles
         intersections = new ArrayList<>();
 
+        // The flashlight polygon
         poly = new Polygon(new int[]{0}, new int[]{0}, 0);
 
         // How broad the flashlight is.
@@ -81,6 +89,7 @@ public class FlashLight {
         for (int i = 0; i < intersections.size(); i++) {
             poly.addPoint(intersections.get(i).x, intersections.get(i).y);
         }
+
         // One point has to be the players position
         poly.addPoint(x, y);
 
@@ -157,28 +166,35 @@ public class FlashLight {
     Check if the angle collides with a segment. Returns true or false.
      */
     public boolean checkIntersection(float angle) {
-        // Calculate dx & dy from angle
-
-        // Find closest intersection
         Point closestIntersection = null;
         double closestDistance = 0;
+
+        // Find closest intersection
         for (int j = 0; j < segments.size(); j++) {
+
             Segment segment = segments.get(j);
 
+            // Calculate the currently closest intersection point
             if (closestIntersection != null)
                 closestDistance = Math.hypot(closestIntersection.x - x, closestIntersection.y - y);
+
+            // Looks for an intersection point
             Point intersect = getIntersection(new Segment(new Point(x + (int) (-RANGE * Math.cos(Math.toRadians(angle))),
                     y + (int) (-RANGE * Math.sin(Math.toRadians(angle)))), new Point(x, y)), segment);
+
+            // Search for another intersection point if no-one is found
             if (intersect == null) {
                 continue;
             }
+
+            // If the current intersection point is closer than the closest
             if (closestIntersection == null || Math.hypot(x - intersect.x, y - intersect.y) < closestDistance) {
                 closestIntersection = intersect;
             }
         }
 
-        if (closestIntersection != null && closestDistance < RANGE + 10 && getAngle(new Point(closestIntersection.x, closestIntersection.y), new Point(x, y)) <= targetAngle + offsetAngle + 10 &&
-                getAngle(new Point(closestIntersection.x, closestIntersection.y), new Point(x, y)) >= targetAngle - offsetAngle - 10) {
+        // If there is a valid intersection point
+        if (closestIntersection != null) {
             intersections.add(closestIntersection);
             return true;
         }
@@ -190,10 +206,6 @@ public class FlashLight {
     Sets the intersection points
      */
     public void setIntersections() {
-        /*for (int i = 0; i < uniAngles.size(); i++) {
-            checkIntersection(uniAngles.get(i));
-        }*/
-
         for (double i = -offsetAngle; i < offsetAngle; i += (float) offsetAngle * 2 / 20) {
             double rounded = (Math.pow(Math.abs(i * 0.5), 2));
             if (!checkIntersection((float) (normalAbsoluteAngleDegrees(targetAngle + i)))) {
@@ -290,19 +302,17 @@ public class FlashLight {
     Draw the flashlight
      */
     public void draw(Graphics2D g2d) {
-        // This creates the "fade-out" flashlight effect
+        // This creates the "tone-out" flashlight effect
         float radius = RANGE - 20;
         float[] dist = new float[]{0.0f, 1.0f};
         Color[] colors = new Color[]{new Color(0.0f, 0.0f, 0.0f, 0.0f), Color.black};
         Point2D center = new Point2D.Float(x, y);
         RadialGradientPaint p = new RadialGradientPaint(center, radius, dist, colors);
-        g2d.setPaint(p);
+
 
         // Sets the opacity of the black foreground which covers the screen
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.90f));
 
-        // The flashlight light
-        g2d.fillPolygon(poly);
 
         g2d.setColor(Color.BLACK);
 
@@ -311,6 +321,10 @@ public class FlashLight {
                 new Rectangle(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE));
         outer.subtract(new Area(poly));
         g2d.fill(outer);
+
+        g2d.setPaint(p);
+        // The flashlight light
+        g2d.fill(poly);
 
         // Reset the alpha-channel
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
@@ -330,27 +344,3 @@ public class FlashLight {
         this.targetX = targetX;
     }
 }
-
-    /*
-    public void setPoints() {
-        points = new ArrayList<>();
-        // Sets points in the points of the segments
-        for (int i = 0; i < segments.size(); i++) {
-            Segment segment = segments.get(i);
-            points.add(segment.getStart());
-            points.add(segment.getEnd());
-        }
-    }
-    public void setAngles() {
-        uniAngles = new ArrayList<>();
-        // creates the angles between a x and y position and the set points
-        for (int i = 0; i < points.size(); i++) {
-            Point uniquePoint = points.get(i);
-            double angle = (getAngle(new Point(uniquePoint.x, uniquePoint.y), new Point(x, y)));
-            angle = Math.toRadians(angle);
-            uniAngles.add(Float.valueOf((float) angle));
-            uniAngles.add(Float.valueOf((float) (angle - 0.00001)));
-            uniAngles.add(Float.valueOf((float) (angle + 0.00001)));
-        }
-    }
-     */

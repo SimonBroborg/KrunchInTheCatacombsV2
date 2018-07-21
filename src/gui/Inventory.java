@@ -1,7 +1,7 @@
 package gui;
 
-import entity.objects.pickups.Pickup;
 import entity.Sprite;
+import entity.objects.pickups.Pickup;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class Inventory {
         return inventory.size() >= maxSpace;
     }
 
-    public GameButton getButton() {
+    public AbstractButton getButton() {
         return button;
     }
 }

@@ -1,11 +1,10 @@
 package state;
 
+import entity.Player;
 import entity.objects.Chest;
 import entity.objects.GameObject;
 import entity.objects.pickups.Pickaxe;
-import entity.objects.pickups.Pickup;
-import entity.Player;
-import gui.GameButton;
+import gui.AbstractButton;
 import main.FlashLight;
 import main.GameComponent;
 import main.Message;
@@ -18,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -29,7 +29,7 @@ public class Level1State implements GameState {
 
     private List<GameObject> objects = null;
     private List<Message> messages = null;
-    private List<GameButton> buttons = null;
+    private List<AbstractButton> buttons = null;
 
     private FlashLight fl = null;
 
@@ -56,11 +56,11 @@ public class Level1State implements GameState {
         player.setPosition(100, 100);
 
         // Add objects to the level
-        Chest c = new Chest(tm, new Pickaxe(tm));
+        Chest c = new Chest(tm, new Pickaxe(tm, player.getInventory()));
         c.setPosition(200, player.getY());
         objects.add(c);
 
-        c = new Chest(tm, new Pickaxe(tm));
+        c = new Chest(tm, new Pickaxe(tm, player.getInventory()));
         c.setPosition(400, player.getY() - 200);
         objects.add(c);
 
@@ -81,7 +81,9 @@ public class Level1State implements GameState {
     }
 
     @Override
-    public void update() {
+    public void update(Point mousePos) {
+        updateMouse(mousePos);
+
         player.update();
         fl.update();
 
@@ -96,10 +98,24 @@ public class Level1State implements GameState {
                 (double) GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
         bg.setPosition(tm.getX(), tm.getY());
 
-        player.checkAct(objects);
-
         if (restart) {
             loadLevel();
+        }
+    }
+
+    private void updateMouse(Point mousePos) {
+        if (mousePos != null) {
+            Point p = MouseInfo.getPointerInfo().getLocation();
+            for (int i = 0; i < buttons.size(); i++) {
+                buttons.get(i).checkHover(mousePos);
+            }
+
+            for (int i = 0; i < objects.size(); i++) {
+                objects.get(i).checkHover(mousePos);
+            }
+            // Sets the target point for the flashlight
+            fl.setTargetX((int) mousePos.getX());
+            fl.setTargetY((int) mousePos.getY());
         }
     }
 
@@ -121,15 +137,10 @@ public class Level1State implements GameState {
     }
 
     private void updateObjects() {
-        Iterator<GameObject> iter = objects.iterator();
+        ListIterator<GameObject> iter = objects.listIterator();
         while (iter.hasNext()) {
             GameObject o = iter.next();
             o.update();
-            if (o instanceof Pickup) {
-                if (((Pickup) o).isPickedUp()) {
-                    ((Pickup) o).addToInventory(player.getInventory());
-                }
-            }
             if (o.shouldRemove()) {
                 iter.remove();
             }
@@ -169,7 +180,7 @@ public class Level1State implements GameState {
         if (k == KeyEvent.VK_D) player.setRight(true);
         if (k == KeyEvent.VK_SPACE) player.setJumping(true);
 
-        if (k == KeyEvent.VK_E) player.setActing(true);
+        if (k == KeyEvent.VK_E) player.activate(objects);
         if (k == KeyEvent.VK_ESCAPE) gsm.setState(GameStateManager.MENUSTATE);
         if (k == KeyEvent.VK_P) restart = true;
         if (k == KeyEvent.VK_TAB) player.getInventory().toggle();
@@ -180,9 +191,6 @@ public class Level1State implements GameState {
         if (k == KeyEvent.VK_A) player.setLeft(false);
         if (k == KeyEvent.VK_D) player.setRight(false);
         if (k == KeyEvent.VK_SPACE) player.setJumping(false);
-        if (k == KeyEvent.VK_E) player.setActing(false);
-
-        if (k == KeyEvent.VK_Q) player.useItem();
 
         if (k == KeyEvent.VK_R) {
             Message m = new Message("WOW", 12);
@@ -202,10 +210,6 @@ public class Level1State implements GameState {
 
     @Override
     public void mouseMoved(final MouseEvent e) {
-        for (int i = 0; i < buttons.size(); i++) {
-            buttons.get(i).checkHover(e.getPoint());
-        }
-        fl.setTargetX(e.getX());
-        fl.setTargetY(e.getY());
+
     }
 }

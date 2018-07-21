@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
  *
  */
 @SuppressWarnings("AssignmentToSuperclassField")
-public class InventoryButton extends GameButton {
+public class InventoryButton extends AbstractButton {
     public InventoryButton(int x, int y) {
         super(x, y);
         sprite = new Sprite("resources/Sprites/objects/Chest/AChest1.png");
@@ -27,6 +27,4 @@ public class InventoryButton extends GameButton {
             gsm.setState(GameStateManager.MENUSTATE);
         }
     }
-
-
 }

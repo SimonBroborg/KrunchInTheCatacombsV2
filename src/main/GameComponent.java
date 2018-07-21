@@ -82,7 +82,7 @@ public class GameComponent extends JComponent {
     }
 
     private void update() {
-        gsm.update();
+        gsm.update(this.getMousePosition());
     }
 
     protected void paintComponent(Graphics g) {

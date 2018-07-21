@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
 
  */
 @SuppressWarnings("MagicNumber")
-public abstract class GameButton {
+public abstract class AbstractButton {
     // misc
     protected GameStateManager gsm = null;
     protected Sprite sprite = null;
@@ -34,7 +34,7 @@ public abstract class GameButton {
     protected int growthLimit;
 
 
-    protected GameButton(int x, int y) {
+    protected AbstractButton(int x, int y) {
         this.x = x;
         this.y = y;
 

@@ -35,8 +35,8 @@ public class GameStateManager
 	System.out.println(currentState);
     }
 
-    public void update(){
-        getCurrentState().update();
+    public void update(Point mousePos) {
+        getCurrentState().update(mousePos);
     }
 
     public void draw(Graphics2D g2d){

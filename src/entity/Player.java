@@ -1,5 +1,6 @@
 package entity;
 
+
 import entity.objects.Chest;
 import entity.objects.GameObject;
 import entity.objects.pickups.Pickaxe;
@@ -8,24 +9,20 @@ import gui.Inventory;
 import map.TileMap;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
  */
 @SuppressWarnings({"AssignmentToSuperclassField", "MagicNumber"})
 public class Player extends Entity {
-    private int useRange;
-    private boolean acting;
+    private int activRange;
     private Inventory inventory;
-    private Pickup activeItem ;
+    private Pickup currentItem;
 
     public Player(TileMap tm) {
         super(tm);
-
-        activeItem = new Pickaxe(tm);
-
 
         // dimensions
         width = 40;
@@ -42,59 +39,66 @@ public class Player extends Entity {
         jumpStart = -10;
         stopJumpSpeed = 0.3;
 
-        // pickUp of things
-        useRange = 40;
+        // the range in which the player can activate game objects
+        activRange = 40;
 
         sprite = new Sprite("resources/Sprites/Player/player.png");
 
         inventory = new Inventory();
+
+        currentItem = new Pickaxe(tm, inventory);
     }
 
-    public void checkAct(List<GameObject> objects) {
-        boolean canUse = false;
-        List<GameObject> newObjects = new ArrayList<>();
-        for (GameObject o : objects) {
+    /**
+     * Checks if any object can be activated by the player
+     *
+     * @param objects the game objects which is on the map
+     */
+    public void activate(List<GameObject> objects) {
+        ListIterator<GameObject> iter = objects.listIterator();
+        while (iter.hasNext()) {
 
-            // If the object can be used in some way
-            if (o.isUsable()) {
+            GameObject o = iter.next();
 
+            // If the object can be activated
+            if (o.isActivatable()) {
                 // Check if the object can be used ( is in range for the player )
-                if (inRange(o.getX(), o.getY(), useRange)) {
-                    canUse = true;
-                }
+                if (inRange(o.getX(), o.getY(), activRange)) {
+                    o.activate();
 
-                // Use the object
-                if (canUse) {
-                    if (acting) {
-                        o.pickUp();
-                        // Check if a chest is used and get its content
-                        if (o instanceof Chest) {
-                            newObjects.addAll(((Chest) o).getContent());
-                        }
+                    // Check if a chest is used and add its content to the world
+                    if (o instanceof Chest) {
+                        for (Pickup p : ((Chest) o).getContent())
+                            iter.add(p);
                     }
-                    o.setCanUse(canUse);
-                    canUse = false;
-                } else {
-                    o.setCanUse(canUse);
                 }
             }
         }
-
-        // Add new objects to the already existing object list
-        objects.addAll(newObjects);
-        newObjects.clear();
     }
 
+    /**
+     * Checks if an object is positioned within a specific range to the player.
+     *
+     * @param ox    the objects x-position
+     * @param oy    the objects y-position
+     * @param range the range (in pixels) which the objects has to be
+     */
     public boolean inRange(int ox, int oy, int range) {
         return Math.hypot(ox - x, oy - y) < range;
-        /*return ((ox > x && ox < x + range) || (ox < x && ox > x - range)) &&
-                oy  > y - height / 2  && oy < y + height / 2;*/
     }
 
+    /**
+     * Use the currently chosen item.
+     */
     public void useItem() {
-        activeItem.use();
+        currentItem.use();
     }
 
+
+    /**
+     * Update the position of the player.
+     * Also updates the players inventory.
+     */
     public void update() {
         // update position
         getNextPosition();
@@ -106,17 +110,22 @@ public class Player extends Entity {
         inventory.update();
     }
 
+    /**
+     * Draws the player.
+     *
+     * @param g2d the drawing object.
+     */
     public void draw(Graphics2D g2d) {
         // Inventory isn't drawn here cause of z-index
         setMapPosition();
         super.draw(g2d);
     }
 
+    /**
+     * Get the players inventory.
+     * @return a list containing pickups.
+     */
     public Inventory getInventory() {
         return inventory;
-    }
-
-    public void setActing(final boolean acting) {
-        this.acting = acting;
     }
 }

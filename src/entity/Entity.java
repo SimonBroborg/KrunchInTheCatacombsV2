@@ -6,7 +6,7 @@ import map.TileMap;
 import java.awt.*;
 
 /**
- *
+ * An object which has a position and a size.
  */
 @SuppressWarnings("MagicNumber")
 public abstract class Entity {
@@ -38,8 +38,6 @@ public abstract class Entity {
     // for bouncing
     protected int bounceSpeed;
 
-    protected boolean canUse;
-    protected boolean usable;
     protected boolean solid;
 
     // movement
@@ -59,7 +57,7 @@ public abstract class Entity {
 
     // Sprite / Animation
     protected Sprite sprite = null;
-    private Sprite usableSprite;
+
     protected boolean facingRight;
 
     // Tile stuff
@@ -67,43 +65,83 @@ public abstract class Entity {
     protected double xmap;
     protected double ymap;
 
+    /**
+     * Creates an entity object
+     *
+     * @param tm the tile map which helps the pickaxe to keep track of collisions.
+     */
     protected Entity(TileMap tm) {
         this.tm = tm;
         tileSize = tm.getTileSize();
         facingRight = true;
-
-        usableSprite = new Sprite("resources/Sprites/Misc/usableSprite.png");
         bounceSpeed = -5;
         solid = true;
     }
 
+    /**
+     * Returns the collision rectangle of the entity
+     *
+     * @return a rectangle with the size and position of the entity
+     * @see javafx.scene.shape.Rectangle
+     */
     public Rectangle getRectangle() {
-        return new Rectangle((int) x - cwidth, (int) y - cheight, cwidth, cheight);
+        return new Rectangle((int) x, (int) y, width, height);
     }
 
+    /**
+     * Get the x-position.
+     *
+     * @return the x-position as an integer
+     */
     public int getX() {
         return (int) x;
     }
 
+    /**
+     * Get the y-position
+     *
+     * @return the y-position as an integer
+     */
     public int getY() {
         return (int) y;
     }
 
+    /**
+     * Set's the x-and y-positions
+     *
+     * @param x the x-position
+     * @param y the y-position
+     */
     public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Get's the maps position. Used to place the entity based on the "camera".
+     */
     public void setMapPosition() {
         xmap = tm.getX();
         ymap = tm.getY();
     }
 
+    /**
+     * Set a movement vector.
+     *
+     * @param dx vector for the x-position.
+     * @param dy vector for the y-position.
+     */
     public void setVector(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }
 
+    /**
+     * Checks which corners of the entity which collides with the tile map
+     *
+     * @param x the entities x-destination
+     * @param y the entities y-destination
+     */
     public void calculateCorners(double x, double y) {
         int leftTile = (int) (x - cwidth / 2) / tileSize;
         int rightTile = (int) (x + cwidth / 2 - 1) / tileSize;
@@ -127,13 +165,7 @@ public abstract class Entity {
 
     }
 
-    public void setCanUse(boolean canUse) {
-        this.canUse = canUse;
-    }
 
-    public boolean isUsable() {
-        return usable;
-    }
 
     public void getNextPosition() {
         // movement
@@ -194,7 +226,7 @@ public abstract class Entity {
         if (dy < 0) {
             if ((topLeft || topRight) && solid) {
                 dy = 0;
-                ytemp = currRow * tileSize + (float)cheight / 2;
+                ytemp = currRow * tileSize + (float) cheight / 2;
 
             } else {
                 ytemp += dy;
@@ -204,7 +236,7 @@ public abstract class Entity {
             if ((bottomLeft || bottomRight) && solid) {
                 dy = 0;
                 falling = false;
-                ytemp = (currRow + 1) * tileSize - (float)cheight / 2;
+                ytemp = (currRow + 1) * tileSize - (float) cheight / 2;
             } else {
                 ytemp += dy;
             }
@@ -214,7 +246,7 @@ public abstract class Entity {
         if (dx < 0) {
             if ((topLeft || bottomLeft) && solid) {
                 dx = 0;
-                xtemp = currCol * tileSize + (float)cwidth / 2;
+                xtemp = currCol * tileSize + (float) cwidth / 2;
             } else {
                 xtemp += dx;
             }
@@ -222,7 +254,7 @@ public abstract class Entity {
         if (dx > 0) {
             if ((topRight || bottomRight) && solid) {
                 dx = 0;
-                xtemp = (currCol + 1) * tileSize - (float)cwidth / 2;
+                xtemp = (currCol + 1) * tileSize - (float) cwidth / 2;
             } else {
                 xtemp += dx;
             }
@@ -268,9 +300,6 @@ public abstract class Entity {
 
     public void draw(Graphics2D g2d) {
         setMapPosition();
-        if (canUse) {
-            g2d.drawImage(usableSprite.getImage(), (int) (x + xmap - width / 2) - 20, (int) (y + ymap - height / 2) - 20, null);
-        }
 
         if (facingRight) {
             g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
