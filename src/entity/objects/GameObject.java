@@ -9,6 +9,7 @@ import java.awt.*;
 /**
  * Different useable objects on the map
  */
+@SuppressWarnings("MagicNumber")
 public abstract class GameObject extends Entity {
     protected boolean remove;
     protected boolean activatable;

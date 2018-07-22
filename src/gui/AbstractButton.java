@@ -1,7 +1,6 @@
 package gui;
 
 import entity.Sprite;
-import state.GameStateManager;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +14,6 @@ import java.awt.event.MouseEvent;
 @SuppressWarnings("MagicNumber")
 public abstract class AbstractButton {
     // misc
-    protected GameStateManager gsm = null;
     protected Sprite sprite = null;
 
     // position

@@ -1,7 +1,9 @@
-package gui;
+package gui.inventory;
 
 import entity.Sprite;
 import entity.objects.pickups.Pickup;
+import gui.AbstractButton;
+import gui.InventoryButton;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,15 +27,17 @@ public class Inventory {
     private int offsetX;
 
     //dimensions
-    private int width;
-    private int height;
+    private int spotWidth;
+    private int spotHeight;
 
+    private List<InventorySpot> spots;
 
     public Inventory() {
-        width = 100;
-        height = 100;
+        maxSpace = 3;
+        spotWidth = 50;
+        spotHeight = 50;
 
-        maxSpace = 2;
+        spots = new ArrayList<>();
 
         inventory = new ArrayList<>();
         button = new InventoryButton(40, 40);
@@ -41,6 +45,10 @@ public class Inventory {
         offsetX = button.getX() + button.getWidth();
         x = 40;
         y = 40;
+
+        for (int i = 0; i < maxSpace; i++) {
+            spots.add(new InventorySpot(x + offsetX + spots.size() * spotWidth, y, spotWidth, spotHeight));
+        }
     }
 
     // Close and open the inventory ( decides if it should be drawn )
@@ -64,6 +72,12 @@ public class Inventory {
 
     public void add(Pickup p) {
         inventory.add(p);
+        for (InventorySpot spot : spots) {
+            if (spot.isEmpty()) {
+                spot.setPickup(p);
+                break;
+            }
+        }
         button.pulse();
     }
 
@@ -80,11 +94,17 @@ public class Inventory {
 
     private void showInventory(Graphics2D g2d) {
         g2d.setColor(Color.RED);
-        g2d.drawRect(x + offsetX, y, width, height);
+        //g2d.drawRect(x + offsetX, y, width, height);
 
-        for (int i = 0; i < inventory.size(); i++) {
-            g2d.drawImage(inventory.get(i).getSprite().getImage(), x * (i + 1) + offsetX, y,
+        for (int i = 0; i < spots.size(); i++) {
+            spots.get(i).draw(g2d);
+            /*
+            g2d.drawRect(x + (i * spotWidth) + offsetX, y, spotWidth, spotHeight);
+
+            // Places the item sprite in the middle of the rect
+            g2d.drawImage(inventory.get(i).getSprite().getImage(), x + (i * spotWidth) + offsetX + Math.abs(spotWidth - inventory.get(i).getSprite().getWidth()) / 2, y,
                     inventory.get(i).getSprite().getWidth(), inventory.get(i).getSprite().getHeight(), null);
+            */
         }
     }
 

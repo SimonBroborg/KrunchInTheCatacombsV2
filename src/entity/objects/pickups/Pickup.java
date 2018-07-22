@@ -2,7 +2,7 @@ package entity.objects.pickups;
 
 import entity.Sprite;
 import entity.objects.GameObject;
-import gui.Inventory;
+import gui.inventory.Inventory;
 import map.TileMap;
 
 import java.awt.*;
@@ -64,15 +64,16 @@ public abstract class Pickup extends GameObject {
             setVector(0, 0);
         }
         if (pickedUp) {
-            // The pickup can no longer be picked up
-            activatable = false;
-
             // Makes sure the pickup can go through tiles without colliding
             solid = false;
+
+            // Makes sure the pickup can't be picked up more than once
+            activatable = false;
 
             addToPInventory();
         }
 
+        // Update the position
         super.update();
     }
 

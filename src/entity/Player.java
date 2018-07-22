@@ -5,7 +5,7 @@ import entity.objects.Chest;
 import entity.objects.GameObject;
 import entity.objects.pickups.Pickaxe;
 import entity.objects.pickups.Pickup;
-import gui.Inventory;
+import gui.inventory.Inventory;
 import map.TileMap;
 
 import java.awt.*;

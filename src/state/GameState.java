@@ -11,19 +11,17 @@ import java.awt.event.MouseEvent;
  */
 public interface GameState
 {
+    public void init();
 
+    public void update(Point mousePos);
 
-    public abstract void init();
+    public void draw(Graphics2D g2d);
 
-    public abstract void update(Point mousePos);
+    public void keyPressed(int k);
 
-    public abstract void draw(Graphics2D g2d);
+    public void keyReleased(int k);
 
-    public abstract void keyPressed(int k);
+    public void mouseClicked(MouseEvent e);
 
-    public abstract void keyReleased(int k);
-
-    public abstract void mouseClicked(MouseEvent e);
-
-    public abstract void mouseMoved(MouseEvent e);
+    public void mouseMoved(MouseEvent e);
 }

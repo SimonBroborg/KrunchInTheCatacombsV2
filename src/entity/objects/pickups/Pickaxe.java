@@ -1,6 +1,6 @@
 package entity.objects.pickups;
 
-import gui.Inventory;
+import gui.inventory.Inventory;
 import map.TileMap;
 
 /**

@@ -1,7 +1,6 @@
 package gui;
 
 import entity.Sprite;
-import state.GameStateManager;
 
 import java.awt.event.MouseEvent;
 
@@ -23,8 +22,5 @@ public class InventoryButton extends AbstractButton {
 
     @Override
     public void mouseClicked(final MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1){
-            gsm.setState(GameStateManager.MENUSTATE);
-        }
     }
 }

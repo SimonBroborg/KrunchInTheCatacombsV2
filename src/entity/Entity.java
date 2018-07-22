@@ -275,6 +275,7 @@ public abstract class Entity {
         return (!falling && !jumping && dy == 0);
     }
 
+
     public double getAngle(Point p) {
         double angle = Math.toDegrees(Math.atan2(p.getY() - y, p.getX() - x));
 

@@ -105,7 +105,6 @@ public class Level1State implements GameState {
 
     private void updateMouse(Point mousePos) {
         if (mousePos != null) {
-            Point p = MouseInfo.getPointerInfo().getLocation();
             for (int i = 0; i < buttons.size(); i++) {
                 buttons.get(i).checkHover(mousePos);
             }
@@ -119,6 +118,9 @@ public class Level1State implements GameState {
         }
     }
 
+    /**
+     * Updates the messages in the message list
+     */
     private void updateMessages() {
         Iterator<Message> iter = messages.iterator();
         while (iter.hasNext()) {
@@ -130,12 +132,19 @@ public class Level1State implements GameState {
         }
     }
 
+    /**
+     * Updates the buttons in the button list
+     */
     private void updateButtons() {
         for (int i = 0; i < buttons.size(); i++) {
             buttons.get(i).update();
         }
     }
 
+
+    /**
+     * Updates the objects in the object list
+     */
     private void updateObjects() {
         ListIterator<GameObject> iter = objects.listIterator();
         while (iter.hasNext()) {
@@ -147,6 +156,12 @@ public class Level1State implements GameState {
         }
     }
 
+    /**
+     * Draw's everything to the screen
+     *
+     * @param g2d the drawing object
+     * @see Graphics2D
+     */
     @Override
     public void draw(final Graphics2D g2d) {
         bg.draw(g2d);
@@ -174,6 +189,10 @@ public class Level1State implements GameState {
 
     }
 
+    /**
+     * Things that happen when the player presses a keyboard button
+     * @param k the number of the key pressed
+     */
     @Override
     public void keyPressed(final int k) {
         if (k == KeyEvent.VK_A) player.setLeft(true);
@@ -181,11 +200,15 @@ public class Level1State implements GameState {
         if (k == KeyEvent.VK_SPACE) player.setJumping(true);
 
         if (k == KeyEvent.VK_E) player.activate(objects);
-        if (k == KeyEvent.VK_ESCAPE) gsm.setState(GameStateManager.MENUSTATE);
+        if (k == KeyEvent.VK_ESCAPE) gsm.changeState(GameStateManager.MENUSTATE);
         if (k == KeyEvent.VK_P) restart = true;
         if (k == KeyEvent.VK_TAB) player.getInventory().toggle();
     }
 
+    /**
+     * Things that heppen when the player releases a keyboard button
+     * @param k the number of the key pressed
+     */
     @Override
     public void keyReleased(final int k) {
         if (k == KeyEvent.VK_A) player.setLeft(false);
@@ -198,6 +221,10 @@ public class Level1State implements GameState {
         }
     }
 
+    /**
+     * Things that happen when the player clicks a mouse button
+     * @param e information about the event
+     */
     @Override
     public void mouseClicked(final MouseEvent e) {
         for (int i = 0; i < buttons.size(); i++) {
@@ -208,6 +235,10 @@ public class Level1State implements GameState {
         player.useItem();
     }
 
+    /**
+     * Things that happen when the player moves the mouse
+     * @param e information about the event
+     */
     @Override
     public void mouseMoved(final MouseEvent e) {
 
