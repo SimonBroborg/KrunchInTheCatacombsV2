@@ -7,10 +7,10 @@ import map.TileMap;
 import java.awt.*;
 
 /**
- * Different useable objects on the map
+ * Objects which can be used by the player
  */
 @SuppressWarnings("MagicNumber")
-public abstract class GameObject extends Entity {
+public abstract class UsableObject extends Entity {
     protected boolean remove;
     protected boolean activatable;
     private Sprite activSprite;
@@ -20,7 +20,7 @@ public abstract class GameObject extends Entity {
      *
      * @param tm the tile map which helps the pickaxe to keep track of collisions.
      */
-    protected GameObject(final TileMap tm) {
+    protected UsableObject(final TileMap tm) {
         super(tm);
         activSprite = new Sprite("resources/Sprites/Misc/activSprite.png");
     }
@@ -53,7 +53,7 @@ public abstract class GameObject extends Entity {
 
     public void checkHover(Point p) {
         if (p != null)
-            activatable = getRectangle().intersects(p.getX() - xmap + (float) width / 2, p.getY() - ymap + (float) height / 2, 1, 1);
+            activatable = getRectangle().intersects(p.getX() + (float) width / 2, p.getY() + (float) height / 2, 1, 1);
     }
 
     /**

@@ -2,11 +2,11 @@ package state;
 
 import entity.Player;
 import entity.objects.Chest;
-import entity.objects.GameObject;
+import entity.objects.UsableObject;
+import entity.objects.pickups.Gun;
 import entity.objects.pickups.Pickaxe;
 import gui.AbstractButton;
 import main.FlashLight;
-import main.GameComponent;
 import main.Message;
 import map.Background;
 import map.TileMap;
@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- *
+ * Game state for level 1 of the game.
  */
 @SuppressWarnings("MagicNumber")
 public class Level1State implements GameState {
     private Player player = null;
-    private TileMap tm = null;
+    private TileMap tm;
 
-    private List<GameObject> objects = null;
+    private List<UsableObject> objects = null;
     private List<Message> messages = null;
     private List<AbstractButton> buttons = null;
 
@@ -35,13 +35,22 @@ public class Level1State implements GameState {
 
     private boolean restart;
 
-    private Background bg = null;
+    private Background bg;
 
-    private GameStateManager gsm;
+    private GameStateManager gsm = null;
 
-    public Level1State(GameStateManager gsm) {
+    public Level1State() {
+        restart = false;
+        tm = new TileMap(40);
+        bg = new Background("resources/Backgrounds/background.jpg", 0);
+
+        loadLevel();
+    }
+
+
+    @Override
+    public void init(GameStateManager gsm) {
         this.gsm = gsm;
-        //init();
     }
 
     private void loadLevel() {
@@ -52,33 +61,22 @@ public class Level1State implements GameState {
         messages = new ArrayList<>();
         buttons = new ArrayList<>();
 
+        tm.loadMapFile("Resources/Maps/level1.txt");
+        tm.loadTileMap();
+
         player = new Player(tm);
         player.setPosition(100, 100);
+        fl = new FlashLight(tm, player);
 
         // Add objects to the level
         Chest c = new Chest(tm, new Pickaxe(tm, player.getInventory()));
         c.setPosition(200, player.getY());
         objects.add(c);
-
-        c = new Chest(tm, new Pickaxe(tm, player.getInventory()));
-        c.setPosition(400, player.getY() - 200);
+        c = new Chest(tm, new Gun(tm, player.getInventory()));
+        c.setPosition(400, player.getY());
         objects.add(c);
-
-        tm.loadMapFile("Resources/Maps/level1.txt");
-        tm.loadTileMap();
-
-        fl = new FlashLight(tm, player);
     }
 
-    @Override
-    public void init() {
-        restart = false;
-
-        tm = new TileMap(40);
-        bg = new Background("resources/Backgrounds/background.jpg", 0);
-
-        loadLevel();
-    }
 
     @Override
     public void update(Point mousePos) {
@@ -87,16 +85,14 @@ public class Level1State implements GameState {
         player.update();
         fl.update();
 
+        tm.update(player);
+
         bg.update();
 
         // update lists
         updateObjects();
         updateMessages();
         updateButtons();
-
-        tm.setPosition((double) GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(),
-                (double) GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
-        bg.setPosition(tm.getX(), tm.getY());
 
         if (restart) {
             loadLevel();
@@ -146,9 +142,9 @@ public class Level1State implements GameState {
      * Updates the objects in the object list
      */
     private void updateObjects() {
-        ListIterator<GameObject> iter = objects.listIterator();
+        ListIterator<UsableObject> iter = objects.listIterator();
         while (iter.hasNext()) {
-            GameObject o = iter.next();
+            UsableObject o = iter.next();
             o.update();
             if (o.shouldRemove()) {
                 iter.remove();
@@ -156,12 +152,7 @@ public class Level1State implements GameState {
         }
     }
 
-    /**
-     * Draw's everything to the screen
-     *
-     * @param g2d the drawing object
-     * @see Graphics2D
-     */
+
     @Override
     public void draw(final Graphics2D g2d) {
         bg.draw(g2d);
@@ -191,22 +182,49 @@ public class Level1State implements GameState {
 
     /**
      * Things that happen when the player presses a keyboard button
+     *
      * @param k the number of the key pressed
      */
     @Override
     public void keyPressed(final int k) {
-        if (k == KeyEvent.VK_A) player.setLeft(true);
-        if (k == KeyEvent.VK_D) player.setRight(true);
-        if (k == KeyEvent.VK_SPACE) player.setJumping(true);
+        switch (k) {
+            case KeyEvent.VK_A:
+                player.setLeft(true);
+                break;
+            case KeyEvent.VK_D:
+                player.setRight(true);
+                break;
+            case KeyEvent.VK_SPACE:
+                player.setJumping(true);
+                break;
+            case KeyEvent.VK_E:
+                player.activate(objects);
+                break;
+            case KeyEvent.VK_ESCAPE:
+                gsm.setState(GameStates.MENU_STATE);
+                break;
+            case KeyEvent.VK_P:
+                restart = true;
+                break;
+            case KeyEvent.VK_TAB:
+                player.getInventory().toggle();
+                break;
 
-        if (k == KeyEvent.VK_E) player.activate(objects);
-        if (k == KeyEvent.VK_ESCAPE) gsm.changeState(GameStateManager.MENUSTATE);
-        if (k == KeyEvent.VK_P) restart = true;
-        if (k == KeyEvent.VK_TAB) player.getInventory().toggle();
+            case KeyEvent.VK_1:
+                player.getInventory().setActiveSpot(1);
+                break;
+            case KeyEvent.VK_2:
+                player.getInventory().setActiveSpot(2);
+                break;
+            case KeyEvent.VK_3:
+                player.getInventory().setActiveSpot(3);
+                break;
+        }
     }
 
     /**
      * Things that heppen when the player releases a keyboard button
+     *
      * @param k the number of the key pressed
      */
     @Override
@@ -223,6 +241,7 @@ public class Level1State implements GameState {
 
     /**
      * Things that happen when the player clicks a mouse button
+     *
      * @param e information about the event
      */
     @Override
@@ -232,15 +251,18 @@ public class Level1State implements GameState {
                 buttons.get(i).mouseClicked(e);
             }
         }
-        player.useItem();
+        player.useItem(e.getPoint());
     }
 
     /**
      * Things that happen when the player moves the mouse
+     *
      * @param e information about the event
      */
     @Override
     public void mouseMoved(final MouseEvent e) {
 
     }
+
+
 }

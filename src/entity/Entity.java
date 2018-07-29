@@ -85,7 +85,7 @@ public abstract class Entity {
      * @see javafx.scene.shape.Rectangle
      */
     public Rectangle getRectangle() {
-        return new Rectangle((int) x, (int) y, width, height);
+        return new Rectangle((int) x + (int) tm.getX(), (int) y + (int) tm.getY(), width, height);
     }
 
     /**
@@ -136,6 +136,7 @@ public abstract class Entity {
         this.dy = dy;
     }
 
+    // TODO: 2018-07-28 Fix new collision system ( back to the old one? )
     /**
      * Checks which corners of the entity which collides with the tile map
      *
@@ -162,7 +163,6 @@ public abstract class Entity {
         topRight = tr.isSolid();
         bottomLeft = bl.isSolid();
         bottomRight = br.isSolid();
-
     }
 
 
@@ -268,8 +268,10 @@ public abstract class Entity {
         }
     }
 
-    /*
-
+    /**
+     * Checks if the entity is on the ground
+     *
+     * @return Boolean telling if the entity is in ground
      */
     public boolean isOnGround() {
         return (!falling && !jumping && dy == 0);
@@ -300,8 +302,6 @@ public abstract class Entity {
     }
 
     public void draw(Graphics2D g2d) {
-        setMapPosition();
-
         if (facingRight) {
             g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
         } else {
@@ -309,7 +309,24 @@ public abstract class Entity {
         }
     }
 
+    public void update() {
+        setMapPosition();
+        getNextPosition();
+        checkTileMapCollision();
+        setPosition(xtemp, ytemp);
+        if (right) facingRight = true;
+        if (left) facingRight = false;
+    }
+
     public Sprite getSprite() {
         return sprite;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -1,5 +1,6 @@
 package gui.inventory;
 
+import entity.Player;
 import entity.Sprite;
 import entity.objects.pickups.Pickup;
 import gui.AbstractButton;
@@ -18,23 +19,22 @@ public class Inventory {
     private InventoryButton button;
 
     private int maxSpace;
+
     // flags
     private boolean opened;
 
-    //position
-    private int x;
-    private int y;
     private int offsetX;
 
-    //dimensions
-    private int spotWidth;
     private int spotHeight;
 
     private List<InventorySpot> spots;
+    private int activeSpot;
 
     public Inventory() {
         maxSpace = 3;
-        spotWidth = 50;
+
+        //dimensions
+        int spotWidth = 50;
         spotHeight = 50;
 
         spots = new ArrayList<>();
@@ -43,8 +43,13 @@ public class Inventory {
         button = new InventoryButton(40, 40);
 
         offsetX = button.getX() + button.getWidth();
-        x = 40;
-        y = 40;
+
+        //position
+        int x = 40;
+        int y = 40;
+
+        // This counts as index 0, but I use "1" for more clarity
+        activeSpot = 1;
 
         for (int i = 0; i < maxSpace; i++) {
             spots.add(new InventorySpot(x + offsetX + spots.size() * spotWidth, y, spotWidth, spotHeight));
@@ -83,29 +88,41 @@ public class Inventory {
 
     public void update() {
         button.update();
+        for (InventorySpot s : spots) {
+            if (!s.isEmpty()) s.getPickup().updateExtras();
+        }
+
+        // Sets the active spot to active, and not-active for the rest
+        for (int i = 0; i < spots.size(); i++) {
+            spots.get(i).setActive(i == activeSpot - 1);
+        }
     }
 
     public void draw(Graphics2D g2d) {
+        for (InventorySpot s : spots) {
+            if (!s.isEmpty()) s.getPickup().drawExtras(g2d);
+        }
+
         if (opened) {
             showInventory(g2d);
         }
         button.draw(g2d);
     }
 
-    private void showInventory(Graphics2D g2d) {
-        g2d.setColor(Color.RED);
-        //g2d.drawRect(x + offsetX, y, width, height);
+    public void useActive(Player player, Point point) {
+        if (!spots.get(activeSpot - 1).isEmpty()) {
+            spots.get(activeSpot - 1).getPickup().use(player, point);
+        }
+    }
 
+    private void showInventory(Graphics2D g2d) {
         for (int i = 0; i < spots.size(); i++) {
             spots.get(i).draw(g2d);
-            /*
-            g2d.drawRect(x + (i * spotWidth) + offsetX, y, spotWidth, spotHeight);
-
-            // Places the item sprite in the middle of the rect
-            g2d.drawImage(inventory.get(i).getSprite().getImage(), x + (i * spotWidth) + offsetX + Math.abs(spotWidth - inventory.get(i).getSprite().getWidth()) / 2, y,
-                    inventory.get(i).getSprite().getWidth(), inventory.get(i).getSprite().getHeight(), null);
-            */
         }
+    }
+
+    public void setActiveSpot(int activeSpot) {
+        this.activeSpot = activeSpot;
     }
 
     public boolean isFull() {

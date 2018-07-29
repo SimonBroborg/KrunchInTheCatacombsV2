@@ -12,23 +12,25 @@ import java.util.List;
 /**
  * The state of the game when the player is using the main menu
  */
-@SuppressWarnings("MagicNumber")
 public class MenuState implements GameState {
-    private GameStateManager gsm;
-    private List<MenuButton> buttons = null;
+    private GameStateManager gsm = null;
+    private List<MenuButton> buttons;
 
-    public MenuState(GameStateManager gsm) {
-        this.gsm = gsm;
-        init();
+    public MenuState() {
+        buttons = new ArrayList<>();
     }
 
     @Override
-    public void init() {
-        buttons = new ArrayList<>();
-        MenuButton resumeButton = new MenuButton(100, 100, gsm.getPrevState(), new Sprite("resources/Sprites/Player/player.png"), gsm);
+    public void init(GameStateManager gsm) {
+        this.gsm = gsm;
+
+        // Loads the first level
+        MenuButton resumeButton = new MenuButton(100, 100, GameStates.LEVEL_1_STATE, new Sprite("resources/Sprites/Player/player.png"), gsm);
         buttons.add(resumeButton);
-        MenuButton quitButton = new MenuButton(100, 200, GameStateManager.QUIT_STATE, new Sprite("resources/Sprites/tiles/normalTile2.png"), gsm);
-        buttons.add(quitButton);
+
+        // Exits the game
+        MenuButton exitButton = new MenuButton(100, 150, GameStates.QUIT_STATE, new Sprite("resources/Sprites/tiles/normalTile.png"), gsm);
+        buttons.add(exitButton);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MenuState implements GameState {
     public void keyPressed(final int k) {
         switch (k) {
             case KeyEvent.VK_ESCAPE:
-                gsm.changeState(gsm.getPrevState());
+                gsm.setState(gsm.getPrevState());
                 break;
             case KeyEvent.VK_S:
                 break;
@@ -75,4 +77,6 @@ public class MenuState implements GameState {
             b.checkHover(e.getPoint());
         }
     }
+
+
 }

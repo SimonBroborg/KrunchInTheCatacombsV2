@@ -11,7 +11,7 @@ import java.util.List;
  * The chest contains pickups for the player to collect.
  */
 @SuppressWarnings({"MagicNumber", "AssignmentToSuperclassField"})
-public class Chest extends GameObject {
+public class Chest extends UsableObject {
     private boolean opened;
     private List<Pickup> content;
 

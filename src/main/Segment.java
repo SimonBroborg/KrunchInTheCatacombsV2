@@ -26,4 +26,8 @@ public class Segment {
         return new Line2D.Float(start, end);
     }
 
+    public void draw(Graphics2D g2d) {
+        g2d.drawLine(start.x, start.y, end.x, end.y);
+    }
+
 }

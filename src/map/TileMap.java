@@ -1,6 +1,8 @@
 package map;
 
+import entity.Player;
 import entity.Sprite;
+import main.GameComponent;
 import map.tiles.EmptyTile;
 import map.tiles.NormalTile;
 import map.tiles.WallTile;
@@ -10,9 +12,6 @@ import java.io.*;
 
 /**
  *
- */
-/*
-
  */
 public class TileMap {
     // Map converting
@@ -32,7 +31,21 @@ public class TileMap {
         this.tileSize = tileSize;
     }
 
-    // Loads a "map file" into a 2D-array
+    /**
+     * Updates the tile map's position
+     *
+     * @param player the player object which the position of the map is based on
+     */
+    public void update(Player player) {
+        setPosition((double) GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(),
+                (double) GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
+    }
+
+    /**
+     * Loads a "map file" into a 2D-array
+     *
+     * @param mapPath file path to the map-file
+     */
     public void loadMapFile(String mapPath) {
         try {
             try (InputStream in = new FileInputStream(new File(mapPath))) {
@@ -55,10 +68,11 @@ public class TileMap {
         }
     }
 
-    // Loads the world by creating all the tiles
+    /**
+     * Loads the world by creating all the tiles
+     */
     public void loadTileMap() {
         tileMap = new Tile[numRows][numCols];
-        System.out.println(numCols + " " + numRows);
         // Loops through the text-map and adds a tile to the tile map for each non-empty tile.
         for (int y = 0; y < map.length; y++) {
             for (int x = 0; x < map[y].length; x++) {
@@ -104,8 +118,6 @@ public class TileMap {
     public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
-
-        //fixBounds();
     }
 
     public Tile[][] getTiles() {

@@ -8,12 +8,9 @@ import java.awt.event.MouseEvent;
  */
 public class QuitState implements GameState {
     public QuitState() {
-    }
-
-    @Override
-    public void init() {
 
     }
+
 
     @Override
     public void update(Point mousePos) {
@@ -43,5 +40,9 @@ public class QuitState implements GameState {
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    @Override
+    public void init(GameStateManager gsm) {
     }
 }

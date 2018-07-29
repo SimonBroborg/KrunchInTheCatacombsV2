@@ -43,15 +43,15 @@ public class Tile {
     }
 
     public double getX() {
-        return x;
+        return x + tm.getX();
     }
 
     public double getY() {
-        return y;
+        return y + tm.getY();
     }
 
     public Rectangle getRectangle() {
-        return new Rectangle((int) x, (int) y, tileSize, tileSize);
+        return new Rectangle((int) x + (int) tm.getX(), (int) y + (int) tm.getY(), tileSize, tileSize);
     }
 
     public void draw(Graphics2D g2d) {

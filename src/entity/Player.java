@@ -1,9 +1,7 @@
 package entity;
 
-
 import entity.objects.Chest;
-import entity.objects.GameObject;
-import entity.objects.pickups.Pickaxe;
+import entity.objects.UsableObject;
 import entity.objects.pickups.Pickup;
 import gui.inventory.Inventory;
 import map.TileMap;
@@ -19,7 +17,6 @@ import java.util.ListIterator;
 public class Player extends Entity {
     private int activRange;
     private Inventory inventory;
-    private Pickup currentItem;
 
     public Player(TileMap tm) {
         super(tm);
@@ -46,7 +43,6 @@ public class Player extends Entity {
 
         inventory = new Inventory();
 
-        currentItem = new Pickaxe(tm, inventory);
     }
 
     /**
@@ -54,11 +50,11 @@ public class Player extends Entity {
      *
      * @param objects the game objects which is on the map
      */
-    public void activate(List<GameObject> objects) {
-        ListIterator<GameObject> iter = objects.listIterator();
+    public void activate(List<UsableObject> objects) {
+        ListIterator<UsableObject> iter = objects.listIterator();
         while (iter.hasNext()) {
 
-            GameObject o = iter.next();
+            UsableObject o = iter.next();
 
             // If the object can be activated
             if (o.isActivatable()) {
@@ -90,8 +86,8 @@ public class Player extends Entity {
     /**
      * Use the currently chosen item.
      */
-    public void useItem() {
-        currentItem.use();
+    public void useItem(Point point) {
+        inventory.useActive(this, point);
     }
 
 
@@ -101,24 +97,8 @@ public class Player extends Entity {
      */
     public void update() {
         // update position
-        getNextPosition();
-        checkTileMapCollision();
-        setPosition(xtemp, ytemp);
-        if (right) facingRight = true;
-        if (left) facingRight = false;
-
+        super.update();
         inventory.update();
-    }
-
-    /**
-     * Draws the player.
-     *
-     * @param g2d the drawing object.
-     */
-    public void draw(Graphics2D g2d) {
-        // Inventory isn't drawn here cause of z-index
-        setMapPosition();
-        super.draw(g2d);
     }
 
     /**

@@ -1,7 +1,8 @@
 package entity.objects.pickups;
 
+import entity.Player;
 import entity.Sprite;
-import entity.objects.GameObject;
+import entity.objects.UsableObject;
 import gui.inventory.Inventory;
 import map.TileMap;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Pickups are items which the player can pick up and use for their special purposes.
  */
 @SuppressWarnings({"MagicNumber", "AssignmentToSuperclassField"})
-public abstract class Pickup extends GameObject {
+public abstract class Pickup extends UsableObject {
     private boolean bouncedOnce;
     private boolean pickedUp;
     private Inventory pInventory;
@@ -53,6 +54,10 @@ public abstract class Pickup extends GameObject {
         setVector(Math.cos(randomNum), bounceSpeed);
         bouncedOnce = true;
     }
+
+    public abstract void drawExtras(Graphics2D g2d);
+
+    public abstract void updateExtras();
 
     /**
      * Updates position and if the pickup has been picked up.
@@ -117,7 +122,7 @@ public abstract class Pickup extends GameObject {
     /**
      * Use the pickup when it's in the players inventory.
      */
-    public abstract void use();
+    public abstract void use(Player player, Point point);
 
     /**
      * Check if the pickup has bounced once.
