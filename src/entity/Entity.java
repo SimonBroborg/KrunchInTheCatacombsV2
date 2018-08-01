@@ -24,16 +24,10 @@ public abstract class Entity {
 
     // collision
     protected int tileSize;
-    protected int currRow;
-    protected int currCol;
     protected double xdest;
     protected double ydest;
     protected double xtemp;
     protected double ytemp;
-    protected boolean topLeft;
-    protected boolean topRight;
-    protected boolean bottomLeft;
-    protected boolean bottomRight;
 
     // for bouncing
     protected int bounceSpeed;
@@ -45,10 +39,6 @@ public abstract class Entity {
     protected boolean right;
     protected boolean jumping;
     protected boolean falling;
-
-    // Makes sure the player doesnt get stuck in the wall
-    protected boolean canMoveLeft;
-    protected boolean canMoveRight;
 
     // movement attributes
     protected double moveSpeed;
@@ -80,73 +70,40 @@ public abstract class Entity {
         facingRight = true;
         bounceSpeed = -5;
         solid = true;
-        canMoveLeft = true;
-        canMoveRight = true;
     }
 
-    /**
-     * Returns the collision rectangle of the entity
-     *
-     * @return a rectangle with the size and position of the entity
-     * @see javafx.scene.shape.Rectangle
-     */
-    public Rectangle getRectangle() {
-        return new Rectangle(x + xmap, y + ymap, width, height);
+    public void draw(Graphics2D g2d) {
+        if (facingRight) {
+            g2d.drawImage(sprite.getImage(), (x + xmap), (y + ymap), width, height, null);
+        } else {
+            g2d.drawImage(sprite.getImage(), (x + xmap + width), (y + ymap), -width, height, null);
+        }
     }
 
-    public Rectangle getRectangle2() {
-        return new Rectangle(x, y, width, height);
+    public void update() {
+        setMapPosition();
+        getNextPosition();
+        checkTileMapCollision();
+        setPosition((int) xtemp, (int) ytemp);
+        if (right) facingRight = true;
+        if (left) facingRight = false;
     }
 
-    /**
-     * Set's the x-and y-positions
-     *
-     * @param x the x-position
-     * @param y the y-position
-     */
-    public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * Get's the maps position. Used to place the entity based on the "camera".
-     */
-    public void setMapPosition() {
-        xmap = tm.getX();
-        ymap = tm.getY();
-    }
-
-    /**
-     * Set a movement vector.
-     *
-     * @param dx vector for the x-position.
-     * @param dy vector for the y-position.
-     */
-    public void setVector(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
-    }
 
     // Sets the movement vectors based on the players current movement
     public void getNextPosition() {
         // movement
-
         if (left) {
-            if (canMoveLeft) {
-                dx -= moveSpeed;
-                canMoveRight = true;
-                if (dx < -maxSpeed) {
-                    dx = -maxSpeed;
-                }
+            dx -= moveSpeed;
+            if (dx < -maxSpeed) {
+                dx = -maxSpeed;
             }
+
         } else if (right) {
-            if (canMoveRight) {
-                dx += moveSpeed;
-                canMoveLeft = true;
-                if (dx > maxSpeed) {
-                    dx = maxSpeed;
-                }
+            dx += moveSpeed;
+            if (dx > maxSpeed) {
+                dx = maxSpeed;
+
             }
         } else {
             if (dx > 0) {
@@ -181,7 +138,6 @@ public abstract class Entity {
         }
     }
 
-
     public void checkTileMapCollision() {
         xdest = x + dx;
         ydest = y + dy;
@@ -194,13 +150,14 @@ public abstract class Entity {
         for (Tile[] tiles : tm.getTiles()) {
             for (Tile tile : tiles) {
                 if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
-                    tile.setHighlight(true);
+                    //tile.setHighlight(true);
+
                     if ((int) ydest - dy + height <= tile.getY()) {
                         ytemp = tile.getY() - height;
                         dy = 0;
                         falling = false;
                     } else if (ydest - dy >= tile.getY() + (int) tile.getRectangle().getHeight()) {
-                        ytemp = tile.getY() + (int) tile.getRectangle().getHeight() + 1;
+                        ytemp = tile.getY() + (int) tile.getRectangle().getHeight();
                         dy = fallSpeed;
                         falling = true;
                     }
@@ -211,7 +168,7 @@ public abstract class Entity {
         for (Tile[] tiles : tm.getTiles()) {
             for (Tile tile : tiles) {
                 if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
-                    tile.setHighlight(true);
+                    //tile.setHighlight(true);
                     if (x + width <= tile.getX()) {
                         xtemp = tile.getX() - width;
                         dx = 0;
@@ -225,10 +182,10 @@ public abstract class Entity {
             }
         }
 
-
         ytemp += dy;
         xtemp += dx;
     }
+
     /**
      * Checks if the entity is on the ground
      *
@@ -262,21 +219,44 @@ public abstract class Entity {
         jumping = b;
     }
 
-    public void draw(Graphics2D g2d) {
-        if (facingRight) {
-            g2d.drawImage(sprite.getImage(), (x + xmap), (y + ymap), width, height, null);
-        } else {
-            g2d.drawImage(sprite.getImage(), (x + xmap + width), (y + ymap), -width, height, null);
-        }
+    /**
+     * Returns the collision rectangle of the entity
+     *
+     * @return a rectangle with the size and position of the entity
+     * @see javafx.scene.shape.Rectangle
+     */
+    public Rectangle getRectangle() {
+        return new Rectangle(x + xmap, y + ymap, width, height);
     }
 
-    public void update() {
-        setMapPosition();
-        getNextPosition();
-        checkTileMapCollision();
-        setPosition((int) xtemp, (int) ytemp);
-        if (right) facingRight = true;
-        if (left) facingRight = false;
+    /**
+     * Set's the x-and y-positions
+     *
+     * @param x the x-position
+     * @param y the y-position
+     */
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * Get's the maps position. Used to place the entity based on the "camera".
+     */
+    public void setMapPosition() {
+        xmap = tm.getX();
+        ymap = tm.getY();
+    }
+
+    /**
+     * Set a movement vector.
+     *
+     * @param dx vector for the x-position.
+     * @param dy vector for the y-position.
+     */
+    public void setVector(double dx, double dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 
     public Sprite getSprite() {

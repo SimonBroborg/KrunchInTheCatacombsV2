@@ -32,8 +32,8 @@ public class Chest extends UsableObject {
         maxFallSpeed = 10;
 
         // Dimensions
-        width = 65;
-        height = 44;
+        width = sprite.getWidth();
+        height = sprite.getHeight();
         cwidth = 55;
         cheight = 34;
 
@@ -61,6 +61,7 @@ public class Chest extends UsableObject {
         if (!opened) {
             sprite = new Sprite("resources/Sprites/objects/Chest/AChest1_opened.png");
             height = 68;
+            y -= 10;
             dy = bounceSpeed;  // prevents the chest from getting stuck in the ground
             cheight = 58;
             opened = true;

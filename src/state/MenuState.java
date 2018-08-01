@@ -2,6 +2,7 @@ package state;
 
 import entity.Sprite;
 import gui.MenuButton;
+import map.Background;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,10 @@ public class MenuState implements GameState {
     private GameStateManager gsm = null;
     private List<MenuButton> buttons;
 
+    private Background bg;
+
+    private Sprite gameLogo;
+
     public MenuState() {
         buttons = new ArrayList<>();
     }
@@ -24,12 +29,15 @@ public class MenuState implements GameState {
     public void init(GameStateManager gsm) {
         this.gsm = gsm;
 
+        bg = new Background("resources/Backgrounds/paper.jpg", 0);
+        gameLogo = new Sprite("resources/Sprites/Misc/gameLogo.png");
+
         // Loads the first level
-        MenuButton resumeButton = new MenuButton(100, 100, GameStates.LEVEL_1_STATE, new Sprite("resources/Sprites/Player/player.png"), gsm);
+        MenuButton resumeButton = new MenuButton(100, gameLogo.getHeight() + 100, GameStates.LEVEL_1_STATE, new Sprite("resources/Sprites/Player/player.png"), gsm);
         buttons.add(resumeButton);
 
         // Exits the game
-        MenuButton exitButton = new MenuButton(100, 150, GameStates.QUIT_STATE, new Sprite("resources/Sprites/tiles/normalTile.png"), gsm);
+        MenuButton exitButton = new MenuButton(100, gameLogo.getHeight() + 150, GameStates.QUIT_STATE, new Sprite("resources/Sprites/tiles/normalTile.png"), gsm);
         buttons.add(exitButton);
     }
 
@@ -42,6 +50,8 @@ public class MenuState implements GameState {
 
     @Override
     public void draw(final Graphics2D g2d) {
+        bg.draw(g2d);
+        g2d.drawImage(gameLogo.getImage(), 100, 20, null);
         for (MenuButton b : buttons) {
             b.draw(g2d);
         }

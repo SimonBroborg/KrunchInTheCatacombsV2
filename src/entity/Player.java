@@ -37,7 +37,7 @@ public class Player extends Entity {
         stopJumpSpeed = 0.3;
 
         // the range in which the player can activate game objects
-        activRange = 40;
+        activRange = 100;
 
         sprite = new Sprite("resources/Sprites/Player/player.png");
 
@@ -59,7 +59,7 @@ public class Player extends Entity {
             // If the object can be activated
             if (o.isActivatable()) {
                 // Check if the object can be used ( is in range for the player )
-                if (inRange(o.getX(), o.getY(), activRange)) {
+                if (inRange(o.getX() + o.getWidth() / 2, o.getY() + o.getHeight() / 2, activRange)) {
                     o.activate();
 
                     // Check if a chest is used and add its content to the world
@@ -80,7 +80,7 @@ public class Player extends Entity {
      * @param range the range (in pixels) which the objects has to be
      */
     public boolean inRange(int ox, int oy, int range) {
-        return Math.hypot(ox - x, oy - y) < range;
+        return Math.hypot(ox - x + width / 2, oy - y + height / 2) < range;
     }
 
     /**
