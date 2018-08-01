@@ -25,7 +25,7 @@ public class Projectile extends UsableObject {
         fallSpeed = 0.3;
 
         setPosition(origin.getX(), origin.getY());
-        //System.out.println("WOWO");
+
         setVector(moveSpeed * Math.cos(Math.toRadians(angle)), moveSpeed * Math.sin(Math.toRadians(angle)));
 
     }

@@ -100,14 +100,14 @@ public abstract class Pickup extends UsableObject {
             int speed = 30;
 
             // Get the position of the inventory icon
-            Point p = new Point(pInventory.getButton().getX() - (int) tm.getX(), pInventory.getButton().getY() - (int) tm.getY());
+            Point p = new Point(pInventory.getButton().getX() - tm.getX(), pInventory.getButton().getY() - tm.getY());
 
             // Set the vector towards the inventory icon
             setVector(speed * Math.cos(Math.toRadians(getAngle(p))), speed * Math.sin(Math.toRadians(getAngle(p))));
 
             // The inventories collision rectangle.
-            Rectangle rect = new Rectangle(pInventory.getButton().getX() - (int) tm.getX(),
-                    pInventory.getButton().getY() - (int) tm.getY(), pInventory.getButton().getWidth(),
+            Rectangle rect = new Rectangle(pInventory.getButton().getX(),
+                    pInventory.getButton().getY(), pInventory.getButton().getWidth(),
                     pInventory.getButton().getHeight());
 
             // Checks if the inventory

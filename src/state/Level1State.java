@@ -65,15 +65,15 @@ public class Level1State implements GameState {
         tm.loadTileMap();
 
         player = new Player(tm);
-        player.setPosition(100, 100);
+        player.setPosition(200, 150);
         fl = new FlashLight(tm, player);
 
         // Add objects to the level
         Chest c = new Chest(tm, new Pickaxe(tm, player.getInventory()));
-        c.setPosition(200, player.getY());
+        c.setPosition(200, player.getYMap());
         objects.add(c);
         c = new Chest(tm, new Gun(tm, player.getInventory()));
-        c.setPosition(400, player.getY());
+        c.setPosition(400, player.getYMap());
         objects.add(c);
     }
 
@@ -162,7 +162,7 @@ public class Level1State implements GameState {
             objects.get(i).draw(g2d);
         }
 
-        fl.draw(g2d);
+        //fl.draw(g2d);
         player.draw(g2d);
 
         for (int i = 0; i < messages.size(); i++) {
@@ -175,6 +175,16 @@ public class Level1State implements GameState {
 
         // Makes sure the inventory isn't covered by the darkness
         player.getInventory().draw(g2d);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2d.setColor(Color.white);
+
+        g2d.drawString("Jumping: " + Boolean.toString(player.isJumping()), 10, 100);
+        g2d.drawString("Falling: " + Boolean.toString(player.isFalling()), 10, 130);
+        g2d.drawString("DX: " + (player.getDx()), 10, 160);
+        g2d.drawString("DY: " + (player.getDy()), 10, 190);
+        g2d.drawString("X: " + (player.getX()), 10, 220);
+        g2d.drawString("Y: " + (player.getY()), 10, 250);
 
         g2d.dispose();
 

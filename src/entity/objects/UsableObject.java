@@ -32,9 +32,8 @@ public abstract class UsableObject extends Entity {
         // update position
         getNextPosition();
         checkTileMapCollision();
-        setPosition(xtemp, ytemp);
+        setPosition((int) xtemp, (int) ytemp);
     }
-
 
     /**
      * Activates the object.
@@ -52,8 +51,9 @@ public abstract class UsableObject extends Entity {
 
 
     public void checkHover(Point p) {
-        if (p != null)
-            activatable = getRectangle().intersects(p.getX() + (float) width / 2, p.getY() + (float) height / 2, 1, 1);
+        if (p != null) {
+            activatable = getRectangle().intersects(p.getX(), p.getY(), 1, 1);
+        }
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class UsableObject extends Entity {
     public void draw(final Graphics2D g2d) {
         setMapPosition();
         if (activatable) {
-            g2d.drawImage(activSprite.getImage(), (int) (x + xmap - width / 2) - 20, (int) (y + ymap - height / 2) - 20, null);
+            g2d.drawImage(activSprite.getImage(), x + xmap - 20, y + ymap - 20, null);
         }
         super.draw(g2d);
     }

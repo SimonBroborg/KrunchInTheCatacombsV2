@@ -22,8 +22,8 @@ public class TileMap {
     private int numCols;
 
     // position
-    private double x;
-    private double y;
+    private int x;
+    private int y;
 
     private int tileSize;
 
@@ -37,8 +37,8 @@ public class TileMap {
      * @param player the player object which the position of the map is based on
      */
     public void update(Player player) {
-        setPosition((double) GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(),
-                (double) GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
+        setPosition(GameComponent.WIDTH / 2 * GameComponent.SCALE - player.getX(),
+                GameComponent.HEIGHT / 2 * GameComponent.SCALE - player.getY());
     }
 
     /**
@@ -115,7 +115,7 @@ public class TileMap {
         }
     }
 
-    public void setPosition(double x, double y) {
+    public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -136,11 +136,11 @@ public class TileMap {
         return numRows;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 }

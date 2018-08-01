@@ -46,8 +46,8 @@ public class FlashLight {
         this.player = player;
 
         // The center of the flashlight is based on the playcers position
-        x = player.getX() + (int) tm.getX();
-        y = player.getY() + (int) tm.getY();
+        x = player.getXMap();
+        y = player.getYMap();
 
         // Where the flashlight is pointing towards
         targetX = 0;
@@ -104,8 +104,8 @@ public class FlashLight {
         intersections.clear();
 
         // set to the players position
-        x = player.getX() + (int) tm.getX();
-        y = player.getY() + (int) tm.getY();
+        x = player.getXMap() + player.getWidth() / 2;
+        y = player.getYMap() + player.getHeight() / 2;
 
         targetAngle = (getAngle(new Point(targetX, targetY), new Point(x, y)));
 
@@ -135,12 +135,12 @@ public class FlashLight {
                 // Get the bounding box rect from the tile
                 Rectangle rect = tile.getRectangle();
                 // If the flashlight can collide with the tile
-                if (tile.isSolid() && player.inRange((int) tile.getX(), (int) tile.getY(), RANGE + 60)) {
+                if (tile.isSolid() && player.inRange(tile.getX(), tile.getY(), RANGE + 60)) {
                     // The corners of the tile
                     Point upperLeft = new Point(rect.x, rect.y);
                     Point lowerLeft = new Point(rect.x, rect.y + rect.height);
-                    Point upperRight = new Point(rect.x + rect.width, rect.y +);
-                    Point lowerRight = new Point(rect.x + rect.width, rect.y + +rect.height);
+                    Point upperRight = new Point(rect.x + rect.width, rect.y);
+                    Point lowerRight = new Point(rect.x + rect.width, rect.y + rect.height);
 
                     // The sides of the tile
                     Segment left = new Segment(upperLeft, lowerLeft);
@@ -321,7 +321,7 @@ public class FlashLight {
                 new Rectangle(0, 0, GameComponent.WIDTH * GameComponent.SCALE, GameComponent.HEIGHT * GameComponent.SCALE));
         outer.subtract(new Area(poly));
 
-        //outer.subtract(new Area(new Rectangle(100 + (int) tm.getX(), 100 + (int) tm.getY(), 500, 50)));
+        //outer.subtract(new Area(new Rectangle(100 + (int) tm.getXMap(), 100 + (int) tm.getYMap(), 500, 50)));
         g2d.fill(outer);
 
         g2d.setPaint(p);

@@ -32,20 +32,22 @@ public class Gun extends Pickup {
 
     @Override
     public void use(Player player, Point point) {
-        projectiles.add(new Projectile(player, (float) getAngle(new Point(player.getX() + (int) tm.getX(), player.getY() + (int) tm.getY()), point), tm));
+        projectiles.add(new Projectile(player, (float) getAngle(new Point(player.getXMap(), player.getYMap()), point), tm));
     }
 
 
     @Override
     public void drawExtras(Graphics2D g2d) {
-        for (Projectile p : projectiles) {
+        Iterator<Projectile> iter = projectiles.listIterator();
+        while (iter.hasNext()) {
+            Projectile p = iter.next();
             p.draw(g2d);
         }
     }
 
     @Override
     public void updateExtras() {
-        Iterator<Projectile> iter = projectiles.listIterator();
+        Iterator<Projectile> iter = projectiles.iterator();
         while (iter.hasNext()) {
             Projectile p = iter.next();
             p.update();

@@ -11,8 +11,8 @@ import java.awt.*;
 @SuppressWarnings("MagicNumber")
 public abstract class Entity {
     // position and vector
-    protected double x;
-    protected double y;
+    protected int x;
+    protected int y;
     protected double dx;
     protected double dy;
 
@@ -46,6 +46,10 @@ public abstract class Entity {
     protected boolean jumping;
     protected boolean falling;
 
+    // Makes sure the player doesnt get stuck in the wall
+    protected boolean canMoveLeft;
+    protected boolean canMoveRight;
+
     // movement attributes
     protected double moveSpeed;
     protected double maxSpeed;
@@ -62,8 +66,8 @@ public abstract class Entity {
 
     // Tile stuff
     protected TileMap tm;
-    protected double xmap;
-    protected double ymap;
+    protected int xmap;
+    protected int ymap;
 
     /**
      * Creates an entity object
@@ -76,6 +80,8 @@ public abstract class Entity {
         facingRight = true;
         bounceSpeed = -5;
         solid = true;
+        canMoveLeft = true;
+        canMoveRight = true;
     }
 
     /**
@@ -85,25 +91,11 @@ public abstract class Entity {
      * @see javafx.scene.shape.Rectangle
      */
     public Rectangle getRectangle() {
-        return new Rectangle((int) x + (int) tm.getX(), (int) y + (int) tm.getY(), width, height);
+        return new Rectangle(x + xmap, y + ymap, width, height);
     }
 
-    /**
-     * Get the x-position.
-     *
-     * @return the x-position as an integer
-     */
-    public int getX() {
-        return (int) x;
-    }
-
-    /**
-     * Get the y-position
-     *
-     * @return the y-position as an integer
-     */
-    public int getY() {
-        return (int) y;
+    public Rectangle getRectangle2() {
+        return new Rectangle(x, y, width, height);
     }
 
     /**
@@ -112,7 +104,7 @@ public abstract class Entity {
      * @param x the x-position
      * @param y the y-position
      */
-    public void setPosition(double x, double y) {
+    public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -136,48 +128,25 @@ public abstract class Entity {
         this.dy = dy;
     }
 
-    // TODO: 2018-07-28 Fix new collision system ( back to the old one? )
-    /**
-     * Checks which corners of the entity which collides with the tile map
-     *
-     * @param x the entities x-destination
-     * @param y the entities y-destination
-     */
-    public void calculateCorners(double x, double y) {
-        int leftTile = (int) (x - cwidth / 2) / tileSize;
-        int rightTile = (int) (x + cwidth / 2 - 1) / tileSize;
-        int topTile = (int) (y - cheight / 2) / tileSize;
-        int bottomTile = (int) (y + cheight / 2 - 1) / tileSize;
-        if (topTile < 0 || bottomTile >= tm.getNumRows() || leftTile < 0 || rightTile >= tm.getNumCols()) {
-            topLeft = false;
-            topRight = false;
-            bottomLeft = false;
-            bottomRight = false;
-            return;
-        }
-        Tile tl = tm.getTiles()[topTile][leftTile];
-        Tile tr = tm.getTiles()[topTile][rightTile];
-        Tile bl = tm.getTiles()[bottomTile][leftTile];
-        Tile br = tm.getTiles()[bottomTile][rightTile];
-        topLeft = tl.isSolid();
-        topRight = tr.isSolid();
-        bottomLeft = bl.isSolid();
-        bottomRight = br.isSolid();
-    }
-
-
-
+    // Sets the movement vectors based on the players current movement
     public void getNextPosition() {
         // movement
+
         if (left) {
-            dx -= moveSpeed;
-            if (dx < -maxSpeed) {
-                dx = -maxSpeed;
+            if (canMoveLeft) {
+                dx -= moveSpeed;
+                canMoveRight = true;
+                if (dx < -maxSpeed) {
+                    dx = -maxSpeed;
+                }
             }
         } else if (right) {
-            dx += moveSpeed;
-            if (dx > maxSpeed) {
-                dx = maxSpeed;
+            if (canMoveRight) {
+                dx += moveSpeed;
+                canMoveLeft = true;
+                if (dx > maxSpeed) {
+                    dx = maxSpeed;
+                }
             }
         } else {
             if (dx > 0) {
@@ -212,62 +181,54 @@ public abstract class Entity {
         }
     }
 
-    public void checkTileMapCollision() {
-        currCol = (int) x / tileSize;
-        currRow = (int) y / tileSize;
 
+    public void checkTileMapCollision() {
         xdest = x + dx;
         ydest = y + dy;
 
         xtemp = x;
         ytemp = y;
 
-        calculateCorners(x, ydest);
-        if (dy < 0) {
-            if ((topLeft || topRight) && solid) {
-                dy = 0;
-                ytemp = currRow * tileSize + (float) cheight / 2;
-
-            } else {
-                ytemp += dy;
+        falling = true;
+        Rectangle cRect = new Rectangle(x + tm.getX(), (int) ydest + tm.getY() + 1, width, height);
+        for (Tile[] tiles : tm.getTiles()) {
+            for (Tile tile : tiles) {
+                if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
+                    tile.setHighlight(true);
+                    if ((int) ydest - dy + height <= tile.getY()) {
+                        ytemp = tile.getY() - height;
+                        dy = 0;
+                        falling = false;
+                    } else if (ydest - dy >= tile.getY() + (int) tile.getRectangle().getHeight()) {
+                        ytemp = tile.getY() + (int) tile.getRectangle().getHeight() + 1;
+                        dy = fallSpeed;
+                        falling = true;
+                    }
+                }
             }
         }
-        if (dy > 0) {
-            if ((bottomLeft || bottomRight) && solid) {
-                dy = 0;
-                falling = false;
-                ytemp = (currRow + 1) * tileSize - (float) cheight / 2;
-            } else {
-                ytemp += dy;
-            }
-        }
-
-        calculateCorners(xdest, y);
-        if (dx < 0) {
-            if ((topLeft || bottomLeft) && solid) {
-                dx = 0;
-                xtemp = currCol * tileSize + (float) cwidth / 2;
-            } else {
-                xtemp += dx;
-            }
-        }
-        if (dx > 0) {
-            if ((topRight || bottomRight) && solid) {
-                dx = 0;
-                xtemp = (currCol + 1) * tileSize - (float) cwidth / 2;
-            } else {
-                xtemp += dx;
+        cRect = new Rectangle((int) xdest + tm.getX(), y + tm.getY(), width, height);
+        for (Tile[] tiles : tm.getTiles()) {
+            for (Tile tile : tiles) {
+                if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
+                    tile.setHighlight(true);
+                    if (x + width <= tile.getX()) {
+                        xtemp = tile.getX() - width;
+                        dx = 0;
+                    }
+                    // Moving to the left
+                    else if (x >= tile.getX() + (int) tile.getRectangle().getWidth()) {
+                        xtemp = tile.getX() + (int) tile.getRectangle().getWidth();
+                        dx = 0;
+                    }
+                }
             }
         }
 
-        if (!falling) {
-            calculateCorners(x, ydest + 1);
-            if (!bottomLeft && !bottomRight) {
-                falling = true;
-            }
-        }
+
+        ytemp += dy;
+        xtemp += dx;
     }
-
     /**
      * Checks if the entity is on the ground
      *
@@ -303,9 +264,9 @@ public abstract class Entity {
 
     public void draw(Graphics2D g2d) {
         if (facingRight) {
-            g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), width, height, null);
+            g2d.drawImage(sprite.getImage(), (x + xmap), (y + ymap), width, height, null);
         } else {
-            g2d.drawImage(sprite.getImage(), (int) (x + xmap - width / 2 + width), (int) (y + ymap - height / 2), -width, height, null);
+            g2d.drawImage(sprite.getImage(), (x + xmap + width), (y + ymap), -width, height, null);
         }
     }
 
@@ -313,7 +274,7 @@ public abstract class Entity {
         setMapPosition();
         getNextPosition();
         checkTileMapCollision();
-        setPosition(xtemp, ytemp);
+        setPosition((int) xtemp, (int) ytemp);
         if (right) facingRight = true;
         if (left) facingRight = false;
     }
@@ -328,5 +289,48 @@ public abstract class Entity {
 
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * Get the x-position.
+     *
+     * @return the x-position as an integer
+     */
+    public int getXMap() {
+        return x + tm.getX();
+    }
+
+    /**
+     * Get the y-position
+     *
+     * @return the y-position as an integer
+     */
+    public int getYMap() {
+        return y + tm.getY();
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+
+    public boolean isJumping() {
+        return jumping;
+    }
+
+    public boolean isFalling() {
+        return falling;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    public double getDx() {
+        return dx;
     }
 }
