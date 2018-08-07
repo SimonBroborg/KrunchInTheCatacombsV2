@@ -30,12 +30,33 @@ public interface GameState
      */
     public void draw(Graphics2D g2d);
 
+    /**
+     * Things that happen when the player presses a keyboard button
+     *
+     * @param k the number of the key pressed
+     */
     public void keyPressed(int k);
 
+    /**
+     * Things that heppen when the player releases a keyboard button
+     *
+     * @param k the number of the key pressed
+     */
     public void keyReleased(int k);
 
+    /**
+     * Things that happen when the player clicks a mouse button
+     *
+     * @param e information about the event
+     */
     public void mouseClicked(MouseEvent e);
 
+
+    /**
+     * Things that happen when the player moves the mouse
+     *
+     * @param e information about the event
+     */
     public void mouseMoved(MouseEvent e);
 
 

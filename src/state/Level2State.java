@@ -9,12 +9,10 @@ import main.FlashLight;
 import java.awt.event.KeyEvent;
 
 /**
- * Game state for level 1 of the game.
+ *
  */
-@SuppressWarnings("MagicNumber")
-public class Level1State extends LevelState {
-
-    public Level1State(String mapPath) {
+public class Level2State extends LevelState {
+    public Level2State(String mapPath) {
         super(mapPath);
 
         loadLevel();
@@ -43,7 +41,7 @@ public class Level1State extends LevelState {
     public void keyPressed(int k) {
         super.keyPressed(k);
         if (k == KeyEvent.VK_4) {
-            gsm.setState(GameStates.LEVEL_2_STATE);
+            gsm.setState(GameStates.LEVEL_1_STATE);
         }
     }
 }

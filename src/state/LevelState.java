@@ -1,7 +1,7 @@
 package state;
 
 import entity.Player;
-import entity.objects.UsableObject;
+import entity.objects.GameObject;
 import gui.AbstractButton;
 import main.FlashLight;
 import main.Message;
@@ -16,15 +16,16 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * Abstract class which sets common things for level states
  */
 public abstract class LevelState implements GameState {
+    // The size of all the tiles
     private static final int TILE_SIZE = 40;
 
     protected Player player = null;
     protected TileMap tm;
 
-    protected List<UsableObject> objects = null;
+    protected List<GameObject> objects = null;
     protected List<Message> messages = null;
     protected List<AbstractButton> buttons = null;
 
@@ -107,7 +108,6 @@ public abstract class LevelState implements GameState {
             showInfo(g2d);
         }
 
-
         g2d.dispose();
 
     }
@@ -155,10 +155,10 @@ public abstract class LevelState implements GameState {
      * Updates the objects in the object list
      */
     private void updateObjects() {
-        Iterator<UsableObject> iter = objects.iterator();
+        Iterator<GameObject> iter = objects.iterator();
         while (iter.hasNext()) {
-            UsableObject o = iter.next();
-            o.update();
+            GameObject o = iter.next();
+            o.update(player);
             if (o.shouldRemove()) {
                 iter.remove();
             }
@@ -177,11 +177,7 @@ public abstract class LevelState implements GameState {
         g2d.drawString("Y: " + (player.getY()), 10, 250);
     }
 
-    /**
-     * Things that happen when the player presses a keyboard button
-     *
-     * @param k the number of the key pressed
-     */
+
     @Override
     public void keyPressed(final int k) {
         switch (k) {
@@ -222,11 +218,7 @@ public abstract class LevelState implements GameState {
         }
     }
 
-    /**
-     * Things that heppen when the player releases a keyboard button
-     *
-     * @param k the number of the key pressed
-     */
+
     @Override
     public void keyReleased(final int k) {
         if (k == KeyEvent.VK_A) player.setLeft(false);
@@ -239,11 +231,7 @@ public abstract class LevelState implements GameState {
         }
     }
 
-    /**
-     * Things that happen when the player clicks a mouse button
-     *
-     * @param e information about the event
-     */
+
     @Override
     public void mouseClicked(final MouseEvent e) {
         for (int i = 0; i < buttons.size(); i++) {
@@ -254,11 +242,7 @@ public abstract class LevelState implements GameState {
         player.useItem(e.getPoint());
     }
 
-    /**
-     * Things that happen when the player moves the mouse
-     *
-     * @param e information about the event
-     */
+
     @Override
     public void mouseMoved(final MouseEvent e) {
 

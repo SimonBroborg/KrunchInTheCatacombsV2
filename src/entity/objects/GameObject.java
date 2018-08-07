@@ -1,6 +1,7 @@
 package entity.objects;
 
 import entity.Entity;
+import entity.Player;
 import entity.Sprite;
 import map.TileMap;
 
@@ -10,9 +11,10 @@ import java.awt.*;
  * Objects which can be used by the player
  */
 @SuppressWarnings("MagicNumber")
-public abstract class UsableObject extends Entity {
+public abstract class GameObject extends Entity {
     protected boolean remove;
     protected boolean activatable;
+    protected boolean highlight;
     private Sprite activSprite;
 
     /**
@@ -20,7 +22,7 @@ public abstract class UsableObject extends Entity {
      *
      * @param tm the tile map which helps the pickaxe to keep track of collisions.
      */
-    protected UsableObject(final TileMap tm) {
+    protected GameObject(final TileMap tm) {
         super(tm);
         activSprite = new Sprite("resources/Sprites/Misc/activSprite.png");
     }
@@ -28,11 +30,13 @@ public abstract class UsableObject extends Entity {
     /**
      * Updates the position of the game object.
      */
-    public void update() {
+    public void update(Player player) {
         // update position
         getNextPosition();
         checkTileMapCollision();
         setPosition((int) xtemp, (int) ytemp);
+
+        highlight = player.inRange(x, y, player.getActivRange());
     }
 
     /**
@@ -56,6 +60,7 @@ public abstract class UsableObject extends Entity {
         }
     }
 
+
     /**
      * Draws the object to the frame
      *
@@ -65,8 +70,10 @@ public abstract class UsableObject extends Entity {
     @Override
     public void draw(final Graphics2D g2d) {
         setMapPosition();
-        if (activatable) {
-            g2d.drawImage(activSprite.getImage(), x + xmap - 20, y + ymap - 20, null);
+        if (highlight) {
+            //g2d.drawImage(activSprite.getImage(), x + xmap - 20, y + ymap - 20, null);
+            g2d.setColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            g2d.fillRect(x + xmap, y + ymap, width, height);
         }
         super.draw(g2d);
     }

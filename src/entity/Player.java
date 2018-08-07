@@ -1,7 +1,7 @@
 package entity;
 
 import entity.objects.Chest;
-import entity.objects.UsableObject;
+import entity.objects.GameObject;
 import entity.objects.pickups.Pickup;
 import gui.inventory.Inventory;
 import map.TileMap;
@@ -50,11 +50,11 @@ public class Player extends Entity {
      *
      * @param objects the game objects which is on the map
      */
-    public void activate(List<UsableObject> objects) {
-        ListIterator<UsableObject> iter = objects.listIterator();
+    public void activate(List<GameObject> objects) {
+        ListIterator<GameObject> iter = objects.listIterator();
         while (iter.hasNext()) {
 
-            UsableObject o = iter.next();
+            GameObject o = iter.next();
 
             // If the object can be activated
             if (o.isActivatable()) {
@@ -110,4 +110,7 @@ public class Player extends Entity {
     }
 
 
+    public int getActivRange() {
+        return activRange;
+    }
 }

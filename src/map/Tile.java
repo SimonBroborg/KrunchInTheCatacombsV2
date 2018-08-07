@@ -56,7 +56,6 @@ public class Tile {
         return x + tm.getX();
     }
 
-
     public int getHeight() {
         return tileSize;
     }

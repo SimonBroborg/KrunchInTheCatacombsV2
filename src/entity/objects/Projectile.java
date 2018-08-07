@@ -7,7 +7,7 @@ import map.TileMap;
 /**
  *
  */
-public class Projectile extends UsableObject {
+public class Projectile extends GameObject {
 
     public Projectile(Entity origin, float angle, TileMap tm) {
         super(tm);
