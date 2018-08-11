@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class LevelState implements GameState {
     // The size of all the tiles
-    private static final int TILE_SIZE = 40;
+    private static final int TILE_SIZE = 20;
 
     protected Player player = null;
     protected TileMap tm;
