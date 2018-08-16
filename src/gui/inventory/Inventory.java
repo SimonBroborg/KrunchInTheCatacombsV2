@@ -23,10 +23,6 @@ public class Inventory {
     // flags
     private boolean opened;
 
-    private int offsetX;
-
-    private int spotHeight;
-
     private List<InventorySpot> spots;
     private int activeSpot;
 
@@ -35,14 +31,14 @@ public class Inventory {
 
         //dimensions
         int spotWidth = 50;
-        spotHeight = 50;
+        final int spotHeight = 50;
 
         spots = new ArrayList<>();
 
         inventory = new ArrayList<>();
         button = new InventoryButton(40, 40);
 
-        offsetX = button.getX() + button.getWidth();
+        final int offsetX = button.getX() + button.getWidth();
 
         //position
         int x = 40;

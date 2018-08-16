@@ -5,7 +5,6 @@ import entity.objects.Chest;
 import entity.objects.pickups.Gun;
 import entity.objects.pickups.Pickaxe;
 import main.FlashLight;
-import map.TMXParser;
 
 import java.awt.event.KeyEvent;
 
@@ -15,13 +14,10 @@ import java.awt.event.KeyEvent;
 @SuppressWarnings("MagicNumber")
 public class Level1State extends LevelState {
 
-    private TMXParser parser;
     public Level1State(String mapPath) {
         super(mapPath);
 
-	parser = new TMXParser();
-	parser.loadTMXFile("resources/maps/tiledmap.tmx");
-        loadLevel();
+	this.loadLevel();
     }
 
     @Override

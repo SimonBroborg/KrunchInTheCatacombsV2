@@ -10,7 +10,6 @@ import java.awt.*;
 /**
  * Objects which can be used by the player
  */
-@SuppressWarnings("MagicNumber")
 public abstract class GameObject extends Entity {
     protected boolean remove;
     protected boolean activatable;
@@ -25,6 +24,7 @@ public abstract class GameObject extends Entity {
     protected GameObject(final TileMap tm) {
         super(tm);
         activSprite = new Sprite("resources/Sprites/Misc/activSprite.png");
+        activatable = true;
     }
 
     /**
@@ -55,9 +55,9 @@ public abstract class GameObject extends Entity {
 
 
     public void checkHover(Point p) {
-        if (p != null) {
+        /*if (p != null) {
             activatable = getRectangle().intersects(p.getX(), p.getY(), 1, 1);
-        }
+        }*/
     }
 
 

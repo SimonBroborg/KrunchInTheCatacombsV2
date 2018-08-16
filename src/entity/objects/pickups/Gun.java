@@ -38,9 +38,7 @@ public class Gun extends Pickup {
 
     @Override
     public void drawExtras(Graphics2D g2d) {
-        Iterator<Projectile> iter = projectiles.listIterator();
-        while (iter.hasNext()) {
-            Projectile p = iter.next();
+        for (final Projectile p : projectiles) {
             p.draw(g2d);
         }
     }

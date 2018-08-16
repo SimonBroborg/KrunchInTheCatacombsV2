@@ -19,6 +19,7 @@ public class Pickaxe extends Pickup {
         super(tm, "resources/Sprites/objects/pickups/pickaxe2.png", pInventory);
     }
 
+
     @Override
     public void drawExtras(Graphics2D g2d) {
 

@@ -80,7 +80,7 @@ public class Player extends Entity {
      * @param range the range (in pixels) which the objects has to be
      */
     public boolean inRange(int ox, int oy, int range) {
-        return Math.hypot(ox - x + width / 2, oy - y + height / 2) < range;
+        return Math.hypot(ox - x + (float) width / 2, oy - y + (float) height / 2) < range;
     }
 
     /**
