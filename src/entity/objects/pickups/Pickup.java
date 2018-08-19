@@ -15,8 +15,13 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings({ "MagicNumber", "AssignmentToSuperclassField" })
 public abstract class Pickup extends GameObject
 {
+
     private boolean bouncedOnce;
+
+    // Flag which checks if it's picked up
     private boolean pickedUp;
+
+    // The inventory to which the pickup will belong to
     private Inventory pInventory;
 
     /**
@@ -43,7 +48,6 @@ public abstract class Pickup extends GameObject
 	maxFallSpeed = 10;
 	bounceSpeed = -10;
 
-	// flags
 	bouncedOnce = false;
     }
 
@@ -52,12 +56,14 @@ public abstract class Pickup extends GameObject
      */
     public void exitChest() {
 	int randomNum = ThreadLocalRandom.current().nextInt(45, 135 + 1);
-	setVector(Math.cos(randomNum), bounceSpeed);
+	setVector(Math.cos(Math.toRadians(randomNum)), bounceSpeed);
 	bouncedOnce = true;
     }
 
+    // If the pickup has any extra things to draw; bullets e.g.
     public abstract void drawExtras(Graphics2D g2d);
 
+    // If the pickup has any extra things to update; bullets e.g.
     public abstract void updateExtras();
 
     /**
@@ -70,6 +76,7 @@ public abstract class Pickup extends GameObject
 	    setVector(0, 0);
 	}
 	if (pickedUp) {
+	    System.out.println("Picked up");
 	    // Makes sure the pickup can go through tiles without colliding
 	    solid = false;
 

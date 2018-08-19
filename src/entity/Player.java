@@ -51,10 +51,13 @@ public class Player extends Entity {
      * @param objects the game objects which is on the map
      */
     public void activate(List<GameObject> objects) {
+	System.out.println("Activate");
         ListIterator<GameObject> iter = objects.listIterator();
         while (iter.hasNext()) {
 
             GameObject o = iter.next();
+
+	    Entity e = new Player(tm);
 
             // If the object can be activated
             if (o.isActivatable()) {

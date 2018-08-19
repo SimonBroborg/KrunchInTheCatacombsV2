@@ -1,6 +1,8 @@
 package map;
 
-
+import entity.Entity;
+import entity.Player;
+import entity.objects.Chest;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,7 +15,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +31,8 @@ public class MapParser
     private int tileWidth;
     private int tileHeight;
 
+    private TileMap tm;
+
     private Map<Integer, String> spritePaths;
 
     // The TXM-file
@@ -34,16 +40,24 @@ public class MapParser
 
     private String[][] textMap = null;
 
-    public MapParser() {
+    private List<Entity> entities;
+
+    // sets up so the XML file can be read
+    private DocumentBuilderFactory dbFactory;
+    private DocumentBuilder dBuilder;
+
+    public MapParser(TileMap tm) {
 	spritePaths = new HashMap<>();
+	entities = new ArrayList<>();
+	this.tm = tm;
     }
 
     public void loadTMXFile(String tmxPath) {
 	System.out.println("Loading tmx file...");
 	try {
 	    // sets up so the XML file can be read
-	    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-	    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	    dbFactory = DocumentBuilderFactory.newInstance();
+	    dBuilder = dbFactory.newDocumentBuilder();
 
 	    File xmlFile = new File(tmxPath);
 	    doc = dBuilder.parse(xmlFile);
@@ -72,13 +86,14 @@ public class MapParser
 	    }
 
 	    // "Fetches" the tsx file path from the tmx file and loads the file
-	    File tsxFile = new File(getTagAttribute("tileset", "source"));
-	    doc = dBuilder.parse("resources/Maps/" + tsxFile);
+	    File tileSprites = new File("tileset.tsx");  // (getTagAttribute("tileset", "source"));
+	    doc = dBuilder.parse("resources/Maps/" + tileSprites);
 
 	    doc.getDocumentElement().normalize();
 
 	    NodeList tileList = doc.getElementsByTagName("tile");
 
+	    // Sets the sprite for each tile type (id)
 	    for (int i = 0; i < tileList.getLength(); i++) {
 		Node nNode = tileList.item(i);
 		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -88,7 +103,35 @@ public class MapParser
 				  eElement.getElementsByTagName("image").item(0).getAttributes().getNamedItem("source")
 					  .getNodeValue();
 		    spritePaths.put(Integer.valueOf(Integer.parseInt(id)), path);
-		    System.out.println("Sprite path loaded");
+		}
+	    }
+
+	    doc = dBuilder.parse(xmlFile);
+	    NodeList objectList = doc.getElementsByTagName("object");
+
+	    for (int i = 0; i < objectList.getLength(); i++) {
+		Node nNode = objectList.item(i);
+		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+		    Element eElement = (Element) nNode;
+
+		    System.out.println("Object type \"" + eElement.getAttribute("name") + "\" added! ");
+		    switch (eElement.getAttribute("name")) {
+			case "player":
+			    Entity e = new Player(tm);
+			    e.setPosition((int) Float.parseFloat(eElement.getAttribute("x")),
+					  (int) Float.parseFloat(eElement.getAttribute("y")));
+			    entities.add(e);
+			    break;
+			case "chest":
+			    Entity c = new Chest(tm);
+			    c.setPosition((int) Float.parseFloat(eElement.getAttribute("x")),
+					  (int) Float.parseFloat(eElement.getAttribute("y")));
+			    entities.add(c);
+			    break;
+			default:
+			    System.out.println("The object type:  " + eElement.getAttribute("name") + " does not exist.");
+			    break;
+		    }
 		}
 	    }
 
@@ -97,7 +140,6 @@ public class MapParser
 	} finally {
 	    System.out.println("TMX-file loaded successfully!");
 	}
-
     }
 
     public Map<Integer, String> getSpritePaths() {
@@ -115,6 +157,10 @@ public class MapParser
 	    System.out.println("Couldn't find the attribute \"" + attribute + "\" in the tag \"" + tag + "\" ");
 	}
 	return value;
+    }
+
+    public ArrayList<Entity> getEntities() {
+	return (ArrayList<Entity>) entities;
     }
 
     public String[][] getTextMap() {

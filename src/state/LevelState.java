@@ -1,7 +1,7 @@
 package state;
 
+import entity.Entity;
 import entity.Player;
-import entity.objects.GameObject;
 import gui.AbstractButton;
 import main.FlashLight;
 import main.Message;
@@ -24,7 +24,7 @@ public abstract class LevelState implements GameState
     protected Player player = null;
     protected TileMap tm = null;
 
-    protected List<GameObject> objects = null;
+    protected List<Entity> objects = null;
     protected List<Message> messages = null;
     protected List<AbstractButton> buttons = null;
 
@@ -60,6 +60,14 @@ public abstract class LevelState implements GameState
 	buttons = new ArrayList<>();
 
 	tm.load();
+
+	// Create the different objects
+	player = (Player) tm.getEntities().get(0);
+	fl = new FlashLight(tm, player);
+
+
+	objects.addAll(tm.getEntities());
+	objects.remove(0);
 
     }
 
@@ -120,7 +128,7 @@ public abstract class LevelState implements GameState
 	    }
 
 	    for (int i = 0; i < objects.size(); i++) {
-		objects.get(i).checkHover(mousePos);
+		//objects.get(i).checkHover(mousePos);
 	    }
 	    // Sets the target point for the flashlight
 	    fl.setTargetX((int) mousePos.getX());
@@ -156,10 +164,10 @@ public abstract class LevelState implements GameState
      * Updates the objects in the object list
      */
     private void updateObjects() {
-	ListIterator<GameObject> iter = objects.listIterator();
+	ListIterator<Entity> iter = objects.listIterator();
 	while (iter.hasNext()) {
-	    GameObject o = iter.next();
-	    o.update(player);
+	    Entity o = iter.next();
+	    o.update();
 	    if (o.shouldRemove()) {
 		iter.remove();
 	    }
@@ -192,7 +200,7 @@ public abstract class LevelState implements GameState
 		player.setJumping(true);
 		break;
 	    case KeyEvent.VK_E:
-		player.activate(objects);
+		//player.activate(objects);
 		break;
 	    case KeyEvent.VK_ESCAPE:
 		gsm.setState(GameStates.MENU_STATE);

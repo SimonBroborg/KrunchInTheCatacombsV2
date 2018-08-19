@@ -1,7 +1,9 @@
 package entity.objects;
 
 import entity.Sprite;
+import entity.objects.pickups.Pickaxe;
 import entity.objects.pickups.Pickup;
+import gui.inventory.Inventory;
 import map.TileMap;
 
 import java.util.ArrayList;
@@ -21,11 +23,11 @@ public class Chest extends GameObject {
      * @param tm     the tile map which helps the chest to keep track of collisions.
      * @param pickup specifies which type of pickup the chets contains.
      */
-    public Chest(final TileMap tm, Pickup pickup) {
+    public Chest(final TileMap tm) {
         super(tm);
         sprite = new Sprite("resources/Sprites/objects/Chest/AChest1.png");
         content = new ArrayList<>();
-        addContent(pickup);
+        addContent(new Pickaxe(tm, new Inventory()));
 
         // Movement
         fallSpeed = 0.5;

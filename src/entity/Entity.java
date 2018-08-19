@@ -53,6 +53,7 @@ public abstract class Entity
     protected Sprite sprite = null;
 
     protected boolean facingRight;
+    protected boolean remove;
 
     // Tile stuff
     protected TileMap tm;
@@ -262,6 +263,17 @@ public abstract class Entity
     public int getHeight() {
 	return height;
     }
+
+
+    /**
+     * Tells if the object should be removed from the map.
+     *
+     * @return true of false based on if it should be removed.
+     */
+    public boolean shouldRemove() {
+	return remove;
+    }
+
 
     /**
      * Get the x-position.

@@ -1,5 +1,6 @@
 package map;
 
+import entity.Entity;
 import entity.Player;
 import entity.Sprite;
 import main.GameComponent;
@@ -7,7 +8,9 @@ import map.tiles.EmptyTile;
 import map.tiles.NormalTile;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +21,8 @@ public class TileMap
     // Map converting
     private String[][] textMap = null; // Convert the text file to a 2D-array
     private Tile[][] tileMap = null;   // Convert the 2D-array containing the textMap to a List with tiles
+    private List<String[]> entityList;
+
 
     // position
     private int x;
@@ -29,6 +34,8 @@ public class TileMap
     private int width;
     private int height;
 
+    private MapParser parser;
+
     private Map<Integer, String> spritePaths;
     private String mapPath;
 
@@ -36,10 +43,11 @@ public class TileMap
     public TileMap(String mapPath) {
 	this.mapPath = mapPath;
 	spritePaths = new HashMap<>();
+	entityList = new ArrayList<>();
     }
 
     public void load() {
-	MapParser parser = new MapParser();
+	parser = new MapParser(this);
 
 	parser.loadTMXFile(mapPath);
 
@@ -128,6 +136,10 @@ public class TileMap
     public void setPosition(int x, int y) {
 	this.x = x;
 	this.y = y;
+    }
+
+    public ArrayList<Entity> getEntities() {
+	return parser.getEntities();
     }
 
     public Tile[][] getTiles() {
