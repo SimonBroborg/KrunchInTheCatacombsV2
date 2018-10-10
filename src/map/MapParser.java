@@ -42,10 +42,6 @@ public class MapParser
 
     private List<Entity> entities;
 
-    // sets up so the XML file can be read
-    private DocumentBuilderFactory dbFactory;
-    private DocumentBuilder dBuilder;
-
     public MapParser(TileMap tm) {
 	spritePaths = new HashMap<>();
 	entities = new ArrayList<>();
@@ -56,8 +52,8 @@ public class MapParser
 	System.out.println("Loading tmx file...");
 	try {
 	    // sets up so the XML file can be read
-	    dbFactory = DocumentBuilderFactory.newInstance();
-	    dBuilder = dbFactory.newDocumentBuilder();
+	    final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	    final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
 	    File xmlFile = new File(tmxPath);
 	    doc = dBuilder.parse(xmlFile);
@@ -169,6 +165,7 @@ public class MapParser
 
     public int getWidth() {
 	return width;
+
     }
 
     public int getHeight() {
