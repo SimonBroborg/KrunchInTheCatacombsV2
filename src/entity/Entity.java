@@ -9,7 +9,8 @@ import java.awt.*;
  * An object which has a position and a size.
  */
 @SuppressWarnings("MagicNumber")
-public abstract class Entity {
+public abstract class Entity
+{
     // position and vector
     protected int x;
     protected int y;
@@ -23,7 +24,6 @@ public abstract class Entity {
     protected int cheight;
 
     // collision
-    protected int tileSize;
     protected double xdest;
     protected double ydest;
     protected double xtemp;
@@ -53,6 +53,7 @@ public abstract class Entity {
     protected Sprite sprite = null;
 
     protected boolean facingRight;
+    protected boolean remove;
 
     // Tile stuff
     protected TileMap tm;
@@ -65,125 +66,121 @@ public abstract class Entity {
      * @param tm the tile map which helps the pickaxe to keep track of collisions.
      */
     protected Entity(TileMap tm) {
-        this.tm = tm;
-        tileSize = tm.getTileSize();
-        facingRight = true;
-        bounceSpeed = -5;
-        solid = true;
+	this.tm = tm;
+	facingRight = true;
+	bounceSpeed = -5;
+	solid = true;
     }
 
     public void draw(Graphics2D g2d) {
-        if (facingRight) {
-            g2d.drawImage(sprite.getImage(), (x + xmap), (y + ymap), width, height, null);
-        } else {
-            g2d.drawImage(sprite.getImage(), (x + xmap + width), (y + ymap), -width, height, null);
-        }
+	if (facingRight) {
+	    g2d.drawImage(sprite.getImage(), (x + xmap), (y + ymap), width, height, null);
+	} else {
+	    g2d.drawImage(sprite.getImage(), (x + xmap + width), (y + ymap), -width, height, null);
+	}
     }
 
     public void update() {
-        setMapPosition();
-        getNextPosition();
-        checkTileMapCollision();
-        setPosition((int) xtemp, (int) ytemp);
-        if (right) facingRight = true;
-        if (left) facingRight = false;
+	setMapPosition();
+	getNextPosition();
+	checkTileMapCollision();
+	setPosition((int) xtemp, (int) ytemp);
+	if (right) facingRight = true;
+	if (left) facingRight = false;
     }
 
 
     // Sets the movement vectors based on the players current movement
     public void getNextPosition() {
-        // movement
-        if (left) {
-            dx -= moveSpeed;
-            if (dx < -maxSpeed) {
-                dx = -maxSpeed;
-            }
+	// movement
+	if (left) {
+	    dx -= moveSpeed;
+	    if (dx < -maxSpeed) {
+		dx = -maxSpeed;
+	    }
 
-        } else if (right) {
-            dx += moveSpeed;
-            if (dx > maxSpeed) {
-                dx = maxSpeed;
+	} else if (right) {
+	    dx += moveSpeed;
+	    if (dx > maxSpeed) {
+		dx = maxSpeed;
 
-            }
-        } else {
-            if (dx > 0) {
-                dx -= stopSpeed;
-                if (dx < 0) {
-                    dx = 0;
-                }
-            } else if (dx < 0) {
-                dx += stopSpeed;
-                if (dx > 0) {
-                    dx = 0;
-                }
-            }
-        }
-        // jumping
-        if (jumping && !falling) {
-            dy = jumpStart;
-            falling = true;
-        }
-        // falling
-        if (falling) {
-            dy += fallSpeed;
-            if (dy > 0) {
-                jumping = false;
-            }
-            if (dy < 0 && !jumping) {
-                dy += stopJumpSpeed;
-            }
-            if (dy > maxFallSpeed) {
-                dy = maxFallSpeed;
-            }
-        }
+	    }
+	} else {
+	    if (dx > 0) {
+		dx -= stopSpeed;
+		if (dx < 0) {
+		    dx = 0;
+		}
+	    } else if (dx < 0) {
+		dx += stopSpeed;
+		if (dx > 0) {
+		    dx = 0;
+		}
+	    }
+	}
+	// jumping
+	if (jumping && !falling) {
+	    dy = jumpStart;
+	    falling = true;
+	}
+	// falling
+	if (falling) {
+	    dy += fallSpeed;
+	    if (dy > 0) {
+		jumping = false;
+	    }
+	    if (dy < 0 && !jumping) {
+		dy += stopJumpSpeed;
+	    }
+	    if (dy > maxFallSpeed) {
+		dy = maxFallSpeed;
+	    }
+	}
     }
 
     public void checkTileMapCollision() {
-        xdest = x + dx;
-        ydest = y + dy;
+	xdest = x + dx;
+	ydest = y + dy;
 
-        xtemp = x;
-        ytemp = y;
+	xtemp = x;
+	ytemp = y;
 
-        falling = true;
-        Rectangle cRect = new Rectangle(x + tm.getX(), (int) ydest + tm.getY() + 1, width, height);
-        for (Tile[] tiles : tm.getTiles()) {
-            for (Tile tile : tiles) {
-                if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
-                    //tile.setHighlight(true);
+	falling = true;
+	Rectangle cRect = new Rectangle(x + tm.getX(), (int) ydest + tm.getY() + 1, width, height);
+	for (Tile[] tiles : tm.getTiles()) {
+	    for (Tile tile : tiles) {
+		if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
+		    if ((int) ydest - dy + height <= tile.getY()) {
+			ytemp = tile.getY() - height;
+			dy = 0;
+			falling = false;
+		    } else if (ydest - dy >= tile.getY() + (int) tile.getRectangle().getHeight()) {
+			ytemp = tile.getY() + (int) tile.getRectangle().getHeight();
+			dy = fallSpeed;
+			falling = true;
+		    }
+		}
+	    }
+	}
+	cRect = new Rectangle((int) xdest + tm.getX(), y + tm.getY(), width, height);
+	for (Tile[] tiles : tm.getTiles()) {
+	    for (Tile tile : tiles) {
+		if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
+		    if (x + width <= tile.getX()) {
+			xtemp = tile.getX() - width;
+			dx = 0;
+		    }
+		    // Moving to the left
+		    else if (x >= tile.getX() + (int) tile.getRectangle().getWidth()) {
+			xtemp = tile.getX() + (int) tile.getRectangle().getWidth();
+			dx = 0;
+		    }
+		}
+	    }
+	}
 
-                    if ((int) ydest - dy + height <= tile.getY()) {
-                        ytemp = tile.getY() - height;
-                        dy = 0;
-                        falling = false;
-                    } else if (ydest - dy >= tile.getY() + (int) tile.getRectangle().getHeight()) {
-                        ytemp = tile.getY() + (int) tile.getRectangle().getHeight();
-                        dy = fallSpeed;
-                        falling = true;
-                    }
-                }
-            }
-        }
-        cRect = new Rectangle((int) xdest + tm.getX(), y + tm.getY(), width, height);
-        for (Tile[] tiles : tm.getTiles()) {
-            for (Tile tile : tiles) {
-                if (cRect.intersects(tile.getRectangle()) && tile.isSolid() && solid) {
-                    //tile.setHighlight(true);
-                    if (x + width <= tile.getX()) {
-                        xtemp = tile.getX() - width;
-                        dx = 0;
-                    }
-                    // Moving to the left
-                    else if (x >= tile.getX() + (int) tile.getRectangle().getWidth()) {
-                        xtemp = tile.getX() + (int) tile.getRectangle().getWidth();
-                        dx = 0;
-                    }
-                }
-            }
-        }
-
-        ytemp += dy;
-        xtemp += dx;
+	ytemp += dy;
+	xtemp += dx;
     }
 
     /**
@@ -192,31 +189,27 @@ public abstract class Entity {
      * @return Boolean telling if the entity is in ground
      */
     public boolean isOnGround() {
-        return (!falling && !jumping && dy == 0);
+	return (!falling && !jumping && dy == 0);
     }
 
 
     public double getAngle(Point p) {
-        double angle = Math.toDegrees(Math.atan2(p.getY() - y, p.getX() - x));
+	double angle = Math.toDegrees(Math.atan2(p.getY() - y, p.getX() - x));
 
-        if (angle < 0) {
-            angle += 360;
-        }
+	if (angle < 0) {
+	    angle += 360;
+	}
 
-        return angle;
+	return angle;
 
     }
 
     public void setLeft(boolean b) {
-        left = b;
+	left = b;
     }
 
     public void setRight(boolean b) {
-        right = b;
-    }
-
-    public void setJumping(boolean b) {
-        jumping = b;
+	right = b;
     }
 
     /**
@@ -226,7 +219,7 @@ public abstract class Entity {
      * @see javafx.scene.shape.Rectangle
      */
     public Rectangle getRectangle() {
-        return new Rectangle(x + xmap, y + ymap, width, height);
+	return new Rectangle(x + xmap, y + ymap, width, height);
     }
 
     /**
@@ -236,16 +229,16 @@ public abstract class Entity {
      * @param y the y-position
      */
     public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
+	this.x = x;
+	this.y = y;
     }
 
     /**
      * Get's the maps position. Used to place the entity based on the "camera".
      */
     public void setMapPosition() {
-        xmap = tm.getX();
-        ymap = tm.getY();
+	xmap = tm.getX();
+	ymap = tm.getY();
     }
 
     /**
@@ -255,21 +248,32 @@ public abstract class Entity {
      * @param dy vector for the y-position.
      */
     public void setVector(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
+	this.dx = dx;
+	this.dy = dy;
     }
 
     public Sprite getSprite() {
-        return sprite;
+	return sprite;
     }
 
     public int getWidth() {
-        return width;
+	return width;
     }
 
     public int getHeight() {
-        return height;
+	return height;
     }
+
+
+    /**
+     * Tells if the object should be removed from the map.
+     *
+     * @return true of false based on if it should be removed.
+     */
+    public boolean shouldRemove() {
+	return remove;
+    }
+
 
     /**
      * Get the x-position.
@@ -277,7 +281,7 @@ public abstract class Entity {
      * @return the x-position as an integer
      */
     public int getXMap() {
-        return x + tm.getX();
+	return x + tm.getX();
     }
 
     /**
@@ -286,31 +290,34 @@ public abstract class Entity {
      * @return the y-position as an integer
      */
     public int getYMap() {
-        return y + tm.getY();
+	return y + tm.getY();
     }
 
     public int getX() {
-        return x;
+	return x;
     }
 
     public int getY() {
-        return y;
+	return y;
     }
 
-
     public boolean isJumping() {
-        return jumping;
+	return jumping;
+    }
+
+    public void setJumping(boolean b) {
+	jumping = b;
     }
 
     public boolean isFalling() {
-        return falling;
+	return falling;
     }
 
     public double getDy() {
-        return dy;
+	return dy;
     }
 
     public double getDx() {
-        return dx;
+	return dx;
     }
 }

@@ -17,7 +17,8 @@ public class Tile {
 
     protected Sprite sprite;
 
-    protected int tileSize;
+    protected int width;
+    protected int height;
 
     protected boolean solid;
     protected boolean transparent;
@@ -31,7 +32,8 @@ public class Tile {
         this.sprite = sprite;
         this.x = x;
         this.y = y;
-        this.tileSize = tm.getTileSize();
+	this.width = tm.getTileWidth();
+	this.height = tm.getTileHeight();
         this.tm = tm;
         this.highlight = false;
     }
@@ -57,11 +59,11 @@ public class Tile {
     }
 
     public int getHeight() {
-        return tileSize;
+	return height;
     }
 
     public int getWidth() {
-        return tileSize;
+	return width;
     }
 
     public double getYMap() {
@@ -69,25 +71,12 @@ public class Tile {
     }
 
     public Rectangle getRectangle() {
-        return new Rectangle((int) this.getXMap(), (int) this.getYMap(), tileSize, tileSize);
-    }
-
-
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
-
-    public Rectangle getRectangle2() {
-        return new Rectangle(x, y, tileSize, tileSize);
+	return new Rectangle((int) this.getXMap(), (int) this.getYMap(), width, height);
     }
 
     public void draw(Graphics2D g2d) {
-        g2d.drawImage(sprite.getImage(), (int) getXMap(), (int) getYMap(), tileSize, tileSize, null);
+	g2d.drawImage(sprite.getImage(), (int) getXMap(), (int) getYMap(), width, height, null);
         g2d.setColor(Color.RED);
 
-        if (highlight) {
-            g2d.drawRect((int) getXMap(), (int) getYMap(), tileSize - 1, tileSize - 1);
-            highlight = false;
-        }
     }
 }

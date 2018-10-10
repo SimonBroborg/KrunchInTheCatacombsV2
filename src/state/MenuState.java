@@ -17,9 +17,9 @@ public class MenuState implements GameState {
     private GameStateManager gsm = null;
     private List<MenuButton> buttons;
 
-    private Background bg;
+    private Background bg = null;
 
-    private Sprite gameLogo;
+    private Sprite gameLogo = null;
 
     public MenuState() {
         buttons = new ArrayList<>();

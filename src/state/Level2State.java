@@ -1,11 +1,5 @@
 package state;
 
-import entity.Player;
-import entity.objects.Chest;
-import entity.objects.pickups.Gun;
-import entity.objects.pickups.Pickaxe;
-import main.FlashLight;
-
 import java.awt.event.KeyEvent;
 
 /**
@@ -23,7 +17,7 @@ public class Level2State extends LevelState {
         // Loads the tile map
         super.loadLevel();
 
-        // Create the different objects
+      /*  // Create the different objects
         player = new Player(tm);
         player.setPosition(200, 150);
         fl = new FlashLight(tm, player);
@@ -35,6 +29,7 @@ public class Level2State extends LevelState {
         c = new Chest(tm, new Gun(tm, player.getInventory()));
         c.setPosition(400, player.getYMap());
         objects.add(c);
+        */
     }
 
     @Override

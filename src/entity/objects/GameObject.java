@@ -1,8 +1,6 @@
 package entity.objects;
 
 import entity.Entity;
-import entity.Player;
-import entity.Sprite;
 import map.TileMap;
 
 import java.awt.*;
@@ -10,12 +8,9 @@ import java.awt.*;
 /**
  * Objects which can be used by the player
  */
-@SuppressWarnings("MagicNumber")
 public abstract class GameObject extends Entity {
-    protected boolean remove;
     protected boolean activatable;
     protected boolean highlight;
-    private Sprite activSprite;
 
     /**
      * Creates a game object
@@ -24,19 +19,20 @@ public abstract class GameObject extends Entity {
      */
     protected GameObject(final TileMap tm) {
         super(tm);
-        activSprite = new Sprite("resources/Sprites/Misc/activSprite.png");
+
+        // The object can be activated by default.
+        activatable = true;
     }
 
     /**
      * Updates the position of the game object.
      */
-    public void update(Player player) {
+    public void update() {
         // update position
         getNextPosition();
         checkTileMapCollision();
         setPosition((int) xtemp, (int) ytemp);
 
-        highlight = player.inRange(x, y, player.getActivRange());
     }
 
     /**
@@ -47,7 +43,7 @@ public abstract class GameObject extends Entity {
     /**
      * Tells if the object is activatable
      *
-     * @return true or false based on if the object can be used.
+     * @return true or false based on if the object can be activated.
      */
     public boolean isActivatable() {
         return activatable;
@@ -55,9 +51,9 @@ public abstract class GameObject extends Entity {
 
 
     public void checkHover(Point p) {
-        if (p != null) {
+        /*if (p != null) {
             activatable = getRectangle().intersects(p.getX(), p.getY(), 1, 1);
-        }
+        }*/
     }
 
 
@@ -79,12 +75,4 @@ public abstract class GameObject extends Entity {
     }
 
 
-    /**
-     * Tells if the object should be removed from the map.
-     *
-     * @return true of false based on if it should be removed.
-     */
-    public boolean shouldRemove() {
-        return remove;
-    }
 }

@@ -1,0 +1,185 @@
+package map;
+
+import entity.Entity;
+import entity.Player;
+import entity.objects.Chest;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ */
+public class MapParser
+{
+    // Dimensions
+    private int width;
+    private int height;
+    private int tileWidth;
+    private int tileHeight;
+
+    private TileMap tm;
+
+    private Map<Integer, String> spritePaths;
+
+    // The TXM-file
+    private Document doc = null;
+
+    private String[][] textMap = null;
+
+    private List<Entity> entities;
+
+    // sets up so the XML file can be read
+    private DocumentBuilderFactory dbFactory;
+    private DocumentBuilder dBuilder;
+
+    public MapParser(TileMap tm) {
+	spritePaths = new HashMap<>();
+	entities = new ArrayList<>();
+	this.tm = tm;
+    }
+
+    public void loadTMXFile(String tmxPath) {
+	System.out.println("Loading tmx file...");
+	try {
+	    // sets up so the XML file can be read
+	    dbFactory = DocumentBuilderFactory.newInstance();
+	    dBuilder = dbFactory.newDocumentBuilder();
+
+	    File xmlFile = new File(tmxPath);
+	    doc = dBuilder.parse(xmlFile);
+
+	    doc.getDocumentElement().normalize();
+
+	    width = Integer.parseInt(getTagAttribute("map", "width"));
+	    height = Integer.parseInt(getTagAttribute("map", "height"));
+	    tileWidth = Integer.parseInt(getTagAttribute("map", "tilewidth"));
+	    tileHeight = Integer.parseInt(getTagAttribute("map", "tileheight"));
+
+	    // Set the size of the map (number of tiles)
+	    textMap = new String[height][width];
+
+	    // Get the numbers representing the tiles
+	    Node tiles = doc.getElementsByTagName("data").item(0);
+
+	    // the tile map as a string
+	    String tileString = tiles.getTextContent();
+	    // splits the string into lines
+	    String[] lines = tileString.split("\n");
+
+	    for (int i = 1; i < height + 1; i++) {
+		String[] tokens = lines[i].split(",");
+		textMap[i - 1] = tokens;
+	    }
+
+	    // "Fetches" the tsx file path from the tmx file and loads the file
+	    File tileSprites = new File("tileset.tsx");  // (getTagAttribute("tileset", "source"));
+	    doc = dBuilder.parse("resources/Maps/" + tileSprites);
+
+	    doc.getDocumentElement().normalize();
+
+	    NodeList tileList = doc.getElementsByTagName("tile");
+
+	    // Sets the sprite for each tile type (id)
+	    for (int i = 0; i < tileList.getLength(); i++) {
+		Node nNode = tileList.item(i);
+		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+		    Element eElement = (Element) nNode;
+		    String id = eElement.getAttribute("id");
+		    String path = xmlFile.getPath() + "/../" +
+				  eElement.getElementsByTagName("image").item(0).getAttributes().getNamedItem("source")
+					  .getNodeValue();
+		    spritePaths.put(Integer.valueOf(Integer.parseInt(id)), path);
+		}
+	    }
+
+	    doc = dBuilder.parse(xmlFile);
+	    NodeList objectList = doc.getElementsByTagName("object");
+
+	    for (int i = 0; i < objectList.getLength(); i++) {
+		Node nNode = objectList.item(i);
+		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+		    Element eElement = (Element) nNode;
+
+		    System.out.println("Object type \"" + eElement.getAttribute("name") + "\" added! ");
+		    switch (eElement.getAttribute("name")) {
+			case "player":
+			    Entity e = new Player(tm);
+			    e.setPosition((int) Float.parseFloat(eElement.getAttribute("x")),
+					  (int) Float.parseFloat(eElement.getAttribute("y")));
+			    entities.add(e);
+			    break;
+			case "chest":
+			    Entity c = new Chest(tm);
+			    c.setPosition((int) Float.parseFloat(eElement.getAttribute("x")),
+					  (int) Float.parseFloat(eElement.getAttribute("y")));
+			    entities.add(c);
+			    break;
+			default:
+			    System.out.println("The object type:  " + eElement.getAttribute("name") + " does not exist.");
+			    break;
+		    }
+		}
+	    }
+
+	} catch (ParserConfigurationException | IOException | SAXException e) {
+	    e.printStackTrace();
+	} finally {
+	    System.out.println("TMX-file loaded successfully!");
+	}
+    }
+
+    public Map<Integer, String> getSpritePaths() {
+	return spritePaths;
+    }
+
+    private String getTagAttribute(String tag, String attribute) {
+	String value = "0";
+
+	try {
+	    value = doc.getElementsByTagName(tag).item(0).getAttributes().getNamedItem(attribute).getNodeValue();
+	} catch (DOMException e) {
+	    e.printStackTrace();
+	} catch (Exception ignored) {
+	    System.out.println("Couldn't find the attribute \"" + attribute + "\" in the tag \"" + tag + "\" ");
+	}
+	return value;
+    }
+
+    public ArrayList<Entity> getEntities() {
+	return (ArrayList<Entity>) entities;
+    }
+
+    public String[][] getTextMap() {
+	return textMap;
+    }
+
+    public int getWidth() {
+	return width;
+    }
+
+    public int getHeight() {
+	return height;
+    }
+
+    public int getTileHeight() {
+	return tileHeight;
+    }
+
+    public int getTileWidth() {
+	return tileWidth;
+    }
+}
