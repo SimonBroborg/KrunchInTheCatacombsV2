@@ -138,6 +138,7 @@ public abstract class Entity
 	}
     }
 
+
     public void checkTileMapCollision() {
 	xdest = x + dx;
 	ydest = y + dy;
